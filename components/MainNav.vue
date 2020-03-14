@@ -1,0 +1,34 @@
+<template>
+  <div class="hk-nav">
+    <van-row :gutter="10">
+      <van-col :span="6">
+        <van-icon name="wap-home-o" size="40px" color="#51a8ff" />
+        <h5>整租</h5>
+      </van-col>
+      <van-col :span="6">
+        <van-icon name="hotel-o" size="40px" color="#5aa218" />
+        <h5>合租</h5>
+      </van-col>
+      <van-col :span="6">
+        <van-icon name="location-o" size="40px" color="#ff0404" />
+        <h5>地图找房</h5>
+      </van-col>
+      <van-col :span="6">
+        <van-icon name="search" size="40px" color="#ffc00d" />
+        <h5>去出租</h5>
+      </van-col>
+    </van-row>
+  </div>
+</template>
+
+<script>
+export default {};
+</script>
+
+<style lang="scss">
+.hk-nav {
+    padding: 20px 10px;
+    background-color: #fff;
+    text-align: center;
+}
+</style>

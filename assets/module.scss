@@ -1,0 +1,20 @@
+.hk-module {
+    padding-bottom: 20px;
+    .hk-module__inner {
+      padding: 10px;
+      background: #fff;
+    }
+  
+    & > h4 {
+      padding: 0 10px 10px;
+      background-color: transparent;
+      color: #444;
+  
+      a {
+        float: right;
+        color: #666;
+        font-weight: normal;
+        font-size: 14px;
+      }
+    }
+  }
