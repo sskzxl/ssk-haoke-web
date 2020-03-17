@@ -32,6 +32,9 @@ module.exports = {
     '~plugins/vant-ui.js',
     '~plugins/http.js',
   ],
+  router: {
+    middleware: 'auth'
+  },
   /*
   ** Nuxt.js dev-modules
   */
@@ -41,6 +44,8 @@ module.exports = {
   ** Nuxt.js modules
   */
   modules: [
+    '@nuxtjs/proxy',
+    '@nuxtjs/axios'
   ],
   /*
   ** Build configuration
@@ -49,7 +54,21 @@ module.exports = {
     /*
     ** You can extend webpack config here
     */
+    vendor: ['axios'],
     extend (config, ctx) {
+    }
+  },
+  axios: {
+    proxy: true,
+    prefix: '/api',
+    credentials: true,
+  },
+  proxy: {
+    '/api': {
+      target: 'http://sskmall.natapp1.cc',
+      pathRewrite: {
+        '^/api': '/'
+      }
     }
   }
 }

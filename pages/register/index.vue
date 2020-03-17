@@ -11,7 +11,7 @@
       />
       <van-field
         v-if="false"
-        v-model="username"
+        v-model="phone"
         name="手机号"
         label="手机号"
         placeholder="手机号"
@@ -37,6 +37,15 @@
         placeholder="密码"
         :rules="[{ required: true, message: '请填写密码' }]"
       />
+
+      <van-field name="host" label="单选框">
+        <template #input>
+          <van-radio-group v-model="host" direction="horizontal">
+            <van-radio :name="1">房东</van-radio>
+            <van-radio :name="2">租客</van-radio>
+          </van-radio-group>
+        </template>
+      </van-field>
       <p class="hk-login__text">
         <van-checkbox v-model="agre">
           我已同意 <a>好客租房用户服务协议</a></van-checkbox
@@ -51,8 +60,8 @@
         </van-button>
       </div>
     </van-form>
-    <nuxt-link to="/register" style="font-size: 14px;margin-left: 10px">
-      还没注册，点击注册
+    <nuxt-link to="/login" style="font-size: 14px;margin-left: 10px">
+      已经注册？点击登录
     </nuxt-link>
     <!--  <p class="hk-login__text" @click="handleChangeLoginType">
       忘记密码，用验证码登录
@@ -61,7 +70,6 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
 import HeaderBasic from "~/components/header/HeaderBasic";
 export default {
   layout: "basic",
@@ -71,32 +79,32 @@ export default {
   data() {
     return {
       username: "",
-      identifying: "",
       password: "",
-      agre: true,
-      loginType: 2 // 1 验证码登录， 2 密码登录
+      loginType: 2,
+      host: 1,
+      agre: true
     };
   },
   beforeCreate() {
-    this.$store.commit("setTitle", "手机号登录");
+    this.$store.commit("setTitle", "用户注册");
   },
   methods: {
-    ...mapActions(['login']),
     handleSubmit() {
-      this.login({
+      if (!this.agre) {
+        this.$toast("使用本服务需要同意用户协议");
+      }
+      this.$http
+        .post("/api/users/register", {
           username: this.username,
-          password: this.password
+          password: this.password,
+          isHost: this.host
+          // username: ''
         })
         .then(res => {
           if (res.status === 0) {
-            this.$toast.success(res.msg);
-            window.localStorage.setItem("haoke_token", res.data);
-            this.$router.push('/')
+            this.$toast.success("注册成功");
           }
         });
-    },
-    handleChangeLoginType() {
-      this.loginType = this.loginType === 1 ? 2 : 1;
     }
   }
 };

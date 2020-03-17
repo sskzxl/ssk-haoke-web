@@ -1,14 +1,16 @@
 <template>
   <div class="hk-user">
     <div class="hk-user-info">
-      <van-row>
-        <van-col span="6">
-          <van-image></van-image>
+      <van-row type="flex" justify="center" align="center">
+        <van-col span="6" class="hk-user__pic">
+          <van-image v-if="user && user.pic"></van-image>
         </van-col>
         <van-col span="18">
-          <h3 v-if="user"></h3>
-          <h3 else><nuxt-link to="/login" style="color: #666;">点击登录</nuxt-link></h3>
-          <p>编辑个人资料</p>
+          <div v-if="user">
+            <h3>{{ user.username }}</h3>
+            <p>编辑个人资料</p>
+          </div>
+          <h3 v-else><nuxt-link to="/login" style="color: #666;">点击登录</nuxt-link></h3>
         </van-col>
       </van-row>
     </div>
@@ -28,15 +30,19 @@
 </template>
 
 <script>
+import { mapActions, mapState } from "vuex";
 import ResourceList from '~/components/resource-list'
 export default {
   layout: "normal",
+  name: 'UserCenter',
   components: {
     ResourceList,
   },
+  computed: {
+    ...mapState(['user'])
+  },
   data() {
     return {
-      user: '',
       navs: [
         {
           name: "看房记录",
@@ -82,7 +88,12 @@ export default {
       resources: []
     };
   },
+  
+  created() {
+    this.getUserInfo();
+  },
   methods: {
+    ...mapActions(['getUserInfo']),
     handleNavClick(nav) {
       this.$router.push({
         path: nav.link
@@ -106,6 +117,15 @@ export default {
   p {
     color: #999;
     font-size: 14px;
+  }
+
+  .hk-user__pic {
+    text-align: center;
+    font-size: 24px;
+  }
+
+  .hk-user__default {
+    border-radius: 50%;
   }
 }
 .hk-user-nav {
