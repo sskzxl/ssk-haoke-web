@@ -1,105 +1,71 @@
 <template>
   <div class="resource">
-      <ResourceList :data="list" @filterChange="handleFilterChange"></ResourceList>
+    <van-list
+      class="hk-messages"
+      v-model="loading"
+      :finished="finished"
+      finished-text="没有更多了"
+      @load="onLoad"
+    >
+      <ResourceList
+        :data="list"
+        @filterChange="handleFilterChange"
+      ></ResourceList>
+    </van-list>
   </div>
 </template>
 
 <script>
-import ResourceList from '~/components/resource-list'
+import ResourceList from "~/components/resource-list";
+import { getResources } from "~/plugins/apis";
 export default {
+  name: "Resources",
   components: {
-    ResourceList,
+    ResourceList
   },
   data() {
     return {
       filterType: 1,
-      list: [
-        {
-          id: 1,
-          name: "背景仙洲十分士大夫1",
-          tags: ["押一付一", "免押金", "精装"],
-          price: 1000,
-          info: "4室1厅1卫/120m/南",
-          img: "https://img.yzcdn.cn/vant/cat.jpeg"
-        },
-        {
-          id: 1,
-          name: "背景仙洲十分士大夫2",
-          tags: ["押一付一", "免押金", "精装"],
-          price: 1000,
-          info: "4室1厅1卫/120m/南",
-          img: "https://img.yzcdn.cn/vant/cat.jpeg"
-        },{
-        id: 1,
-          name: "背景仙洲十分士大夫3",
-          tags: ["押一付一", "免押金", "精装"],
-          price: 1000,
-          info: "4室1厅1卫/120m/南",
-          img: "https://img.yzcdn.cn/vant/cat.jpeg"
-        },
-        {
-          id: 1,
-          name: "背景仙洲十分士大夫4",
-          tags: ["押一付一", "免押金", "精装"],
-          price: 1000,
-          info: "4室1厅1卫/120m/南",
-          img: "https://img.yzcdn.cn/vant/cat.jpeg"
-        },
-        {
-          id: 1,
-          name: "背景仙洲十分士大夫5",
-          tags: ["押一付一", "免押金", "精装"],
-          price: 1000,
-          info: "4室1厅1卫/120m/南",
-          img: "https://img.yzcdn.cn/vant/cat.jpeg"
-        },
-        {
-          id: 1,
-          name: "背景仙洲十分士大夫6",
-          tags: ["押一付一", "免押金", "精装"],
-          price: 1000,
-          info: "4室1厅1卫/120m/南",
-          img: "https://img.yzcdn.cn/vant/cat.jpeg"
-        },
-        {
-          id: 1,
-          name: "背景仙洲十分士大夫7",
-          tags: ["押一付一", "免押金", "精装"],
-          price: 1000,
-          info: "4室1厅1卫/120m/南",
-          img: "https://img.yzcdn.cn/vant/cat.jpeg"
-        },
-        {
-          id: 1,
-          name: "背景仙洲十分士大夫8",
-          tags: ["押一付一", "免押金", "精装"],
-          price: 1000,
-          info: "4室1厅1卫/120m/南",
-          img: "https://img.yzcdn.cn/vant/cat.jpeg"
-        },
-        {
-          id: 1,
-          name: "背景仙洲十分士大夫9",
-          tags: ["押一付一", "免押金", "精装"],
-          price: 1000,
-          info: "4室1厅1卫/120m/南",
-          img: "https://img.yzcdn.cn/vant/cat.jpeg"
-        },
-        {
-          id: 1,
-          name: "背景仙洲十分士大夫",
-          tags: ["押一付一", "免押金", "精装"],
-          price: 1000,
-          info: "4室1厅1卫/120m/南",
-          img: "https://img.yzcdn.cn/vant/cat.jpeg"
-        },
-      ]
-    }
+      list: [],
+      pageNum: 0,
+      pageSize: 10,
+      loading: false,
+      finished: false
+    };
+  },
+  asyncData() {
+    /* return getResources({
+      filter: "{}",
+      pageNum: 1,
+      pageSize: 10
+    }).then(res => {
+      return { list: res.data.records };
+    }); */
   },
   methods: {
+    onLoad() {
+      this.pageNum++;
+      console.log('loading')
+      getResources({
+        filter: "{}",
+        pageNum: this.pageNum,
+        pageSize: this.pageSize
+      }).then(res => {
+        res.data.records.forEach(item => {
+          this.list.push(item);
+        })
+        // 加载状态结束
+        this.loading = false;
+
+        // 数据全部加载完成
+        if (res.data.records.length === 0) {
+          this.finished = true;
+        }
+      });
+    },
     handleFilterChange(type) {}
   }
-}
+};
 </script>
 
 <style lang="scss">

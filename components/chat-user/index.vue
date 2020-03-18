@@ -5,7 +5,7 @@
         <van-image></van-image>
       </van-col>
       <van-col span="14">
-        <p>王女士</p>
+        <p>{{ user.name }}</p>
         <p>已认证房主</p>
       </van-col>
       <van-col span="6">
@@ -17,7 +17,13 @@
 
 <script>
   export default {
-    name: "index.vue"
+    name: "index.vue",
+    props: {
+      user: {
+        type: Object,
+        required: true
+      }
+    }
   }
 </script>
 

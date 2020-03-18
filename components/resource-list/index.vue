@@ -1,6 +1,6 @@
 <template>
   <div class="hk-resources">
-    <van-row style="text-align: center;" v-if="filter">
+    <van-row style="position: sticky;top: 50px;text-align: center;" v-if="filter">
       <van-col :span="6">
         <van-dropdown-menu>
           <van-dropdown-item title="地区" ref="">
@@ -30,7 +30,7 @@
     <div class="hk-recommend__list">
       <ResourceItem
         v-for="item in resources"
-        :key="item.name"
+        :key="item.id"
         :data="item"
       ></ResourceItem>
       <p v-if="resources.length === 0 && filterType === 0" style="padding: 20px 0;">暂无推荐</p>

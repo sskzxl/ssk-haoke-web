@@ -1,9 +1,10 @@
-import {http} from "~/plugins/http";
+import { http } from "~/plugins/http";
 
 export const state = () => ({
   title: "",
   navIndex: 0,
   isShowConcat: false,
+  isShowLogout: false,
   navs: [
     {
       tabTitle: "首页",
@@ -57,6 +58,9 @@ export const mutations = {
   setShowConcat(state, value) {
     state.isShowConcat = value;
   },
+  setShowLogout(state, value) {
+    state.isShowLogout = value;
+  },
   setToken(state, value) {
     state.token = value;
   },
@@ -72,18 +76,17 @@ export const actions = {
       return res.data;
     });
   },
-  login(context, {username, password}) {
+  login(context, { username, password }) {
     return http.post("/api/users/login", {
       username,
-      password,
-    })
+      password
+    });
   },
   logout(context) {
-    return http.post("/api/users/logout")
+    return http.post("/api/users/logout").then(res => {
+      window.localStorage.removeItem("haoke_token");
+      context.commit("setUserInfo", null);
+      context.commit("token", "");
+    });
   },
-  getResource(context, params) {
-    return http.get("/api/graphql", {
-      params,
-    })
-  }
 };

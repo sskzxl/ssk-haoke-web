@@ -88,8 +88,8 @@ export default {
           password: this.password
         })
         .then(res => {
-          if (res.status === 0) {
-            this.$toast.success(res.msg);
+          if (res.resultCode === 0) {
+            this.$toast.success(res.resultMsg);
             window.localStorage.setItem("haoke_token", res.data);
             this.$router.push('/')
           }

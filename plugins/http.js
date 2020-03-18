@@ -12,10 +12,10 @@ _http.interceptors.request.use(config => {
 
 _http.interceptors.response.use(
   function httpResponse(response) {
-    if (response.data && response.data.status === 0) {
+    if (response.data && response.data.resultCode === 0) {
       return response.data;
     } else {
-      Toast.fail(response.data.msg);
+      Toast.fail(response.data.resultMsg);
       return response.data;
     }
   },
@@ -24,10 +24,10 @@ _http.interceptors.response.use(
       return;
     }
     const rep = error.response
-    if (rep.status === 401) {
+    if (rep.resultCode === 401) {
         _redirect("/login");
     } 
-    Toast.fail(error.response.data.msg);
+    Toast.fail(error.response.data.resultMsg);
     return Promise.reject(error);
   }
 );

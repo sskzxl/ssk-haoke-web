@@ -7,11 +7,12 @@
     @click-left="handleClickLeft"
   >
     <span slot="right" v-if="isShowConcat">联系我们</span>
+    <span slot="right" v-if="isShowLogout" @click="handleLogout">退出</span>
   </van-nav-bar>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 export default {
   name: "HeaderBasic",
   data() {
@@ -26,15 +27,19 @@ export default {
     }
   },
   computed: {
-    ...mapState(["title", "isShowConcat"])
+    ...mapState(["title", "isShowConcat", "isShowLogout"])
   },
   methods: {
+    ...mapActions(["logout"]),
     handleClickLeft() {
       this.$router.back();
     },
     onClickRight() {},
     onSearch() {},
-    onCancel() {}
+    onCancel() {},
+    handleLogout() {
+      this.logout();
+    }
   }
 };
 </script>

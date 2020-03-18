@@ -25,7 +25,7 @@
           <van-col :span="12">
             <div class="hk-group__inner">
               <a>
-                <img src="https://img.yzcdn.cn/vant/cat.jpeg"  alt="房间"/>
+                <img src="https://img.yzcdn.cn/vant/cat.jpeg" alt="房间" />
                 <div class="hk-group__info">
                   <h5>家住回龙观</h5>
                   <p>归属的感觉</p>
@@ -103,6 +103,8 @@
 <script>
 import MainNav from "~/components/MainNav";
 import ResourceList from "~/components/resource-list";
+import { getResources } from "~/plugins/apis";
+
 const APIData = [
   {
     label: 1,
@@ -148,6 +150,15 @@ export default {
         }
       ]
     };
+  },
+  created() {
+    getResources({
+      filter: '{}',
+      pageNum: 1,
+      pageSize: 10
+    }).then(({ data }) => {
+      this.resources = data.records;
+    });
   },
   mounted() {},
   methods: {}

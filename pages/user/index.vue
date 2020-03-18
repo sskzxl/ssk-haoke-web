@@ -10,36 +10,55 @@
             <h3>{{ user.username }}</h3>
             <p>编辑个人资料</p>
           </div>
-          <h3 v-else><nuxt-link to="/login" style="color: #666;">点击登录</nuxt-link></h3>
+          <h3 v-else>
+            <nuxt-link to="/login" style="color: #666;">点击登录</nuxt-link>
+          </h3>
         </van-col>
       </van-row>
     </div>
     <div class="hk-user-nav">
       <van-grid>
-        <van-grid-item v-for="nav in navs" :key="nav.name" :icon="nav.icon" :text="nav.name" @click="handleNavClick(nav)">
+        <van-grid-item
+          v-for="nav in navs"
+          :key="nav.name"
+          :icon="nav.icon"
+          :text="nav.name"
+          @click="handleNavClick(nav)"
+        >
         </van-grid-item>
       </van-grid>
     </div>
     <div class="hk-module" style="margin-top: 40px">
       <h4>猜您喜欢</h4>
       <div class="hk-module__inner">
-        <ResourceList :showCount="3" :filter="false" :data="resources"></ResourceList>
+        <ResourceList
+          :showCount="3"
+          :filter="false"
+          :data="resources"
+        ></ResourceList>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
-import ResourceList from '~/components/resource-list'
+import { mapActions, mapState, mapMutations } from "vuex";
+import ResourceList from "~/components/resource-list";
 export default {
   layout: "normal",
-  name: 'UserCenter',
+  name: "UserCenter",
   components: {
-    ResourceList,
+    ResourceList
   },
   computed: {
-    ...mapState(['user'])
+    ...mapState(["user"]),
+    token: function() {
+      const token = this.$store.state.token;
+      if (token) {
+        this.setShowLogout(true);
+      }
+      return token;
+    }
   },
   data() {
     return {
@@ -88,16 +107,17 @@ export default {
       resources: []
     };
   },
-  
   created() {
+    console.log(this);
     this.getUserInfo();
   },
   methods: {
-    ...mapActions(['getUserInfo']),
+    ...mapMutations(["setShowLogout"]),
+    ...mapActions(["getUserInfo"]),
     handleNavClick(nav) {
       this.$router.push({
         path: nav.link
-      })
+      });
     }
   }
 };
