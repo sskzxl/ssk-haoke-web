@@ -1,4 +1,6 @@
-import { http } from "~/plugins/http";
+import {http} from "~/plugins/http";
+import {context} from "vant/lib/mixins/popup/context";
+import {getCityList} from "../plugins/apis";
 
 export const state = () => ({
   title: "",
@@ -37,6 +39,9 @@ export const state = () => ({
       path: "/user"
     }
   ],
+  banners: [],
+  position: { city: '', district: '' },
+  citys: [],
   user: null,
   token: window.localStorage.getItem("haoke_token")
 });
@@ -66,7 +71,19 @@ export const mutations = {
   },
   setUserInfo(state, value) {
     state.user = value;
-  }
+  },
+  setBanners(state, value) {
+    state.banners = value;
+  },
+  setCityList(state, value) {
+    state.citys = value;
+  },
+  setCity(state, value) {
+    state.position.city = value;
+  },
+  setDistrict(state, value) {
+    state.position.dirstrict = value;
+  },
 };
 
 export const actions = {
@@ -76,7 +93,7 @@ export const actions = {
       return res.data;
     });
   },
-  login(context, { username, password }) {
+  login(context, {username, password}) {
     return http.post("/api/users/login", {
       username,
       password
@@ -89,4 +106,18 @@ export const actions = {
       context.commit("token", "");
     });
   },
+  getBanners(context) {
+    return http.get("/api/ad").then(res => {
+      context.commit("setBanners", res.data.list);
+    });
+  },
+  getCityList(context) {
+    return getCityList().then(res => {
+      context.commit("setCityList", res.data.map(item => {
+        const i = {};
+        i[String(item.value)] = item.label;
+        return i;
+      }));
+    });
+  }
 };

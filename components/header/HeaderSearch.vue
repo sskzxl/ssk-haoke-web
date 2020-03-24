@@ -1,7 +1,7 @@
 <template>
   <van-nav-bar fixed class="hk-navbar">
     <span slot="left">
-      北京
+      {{ position.city }}
       <van-icon name="arrow-down" />
     </span>
     <van-search
@@ -16,12 +16,16 @@
 </template>
 
 <script>
+  import {mapState} from "vuex";
 export default {
   name: "HeaderSearch",
   data() {
     return {
       searchValue: ""
     };
+  },
+  computed: {
+    ...mapState(['position'])
   },
   methods: {
     onClickLeft() {},

@@ -6,7 +6,9 @@ const _http = axios.create({});
 let _redirect;
 _http.interceptors.request.use(config => {
   const userToken = localStorage.getItem("haoke_token");
-  config.headers.Authorization = userToken;
+  if (config.url.includes('/api')) {
+    config.headers.Authorization = userToken;
+  }
   return config;
 });
 
@@ -26,7 +28,7 @@ _http.interceptors.response.use(
     const rep = error.response
     if (rep.resultCode === 401) {
         _redirect("/login");
-    } 
+    }
     Toast.fail(error.response.data.resultMsg);
     return Promise.reject(error);
   }
