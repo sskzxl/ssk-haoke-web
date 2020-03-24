@@ -10,8 +10,10 @@
         <h5>合租</h5>
       </van-col>
       <van-col :span="6">
-        <van-icon name="location-o" size="40px" color="#ff0404" />
-        <h5>地图找房</h5>
+        <nuxt-link to="/map">
+          <van-icon name="location-o" size="40px" color="#ff0404" />
+          <h5>地图找房</h5>
+        </nuxt-link>
       </van-col>
       <van-col :span="6">
         <van-icon name="search" size="40px" color="#ffc00d" />

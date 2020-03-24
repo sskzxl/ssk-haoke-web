@@ -8,6 +8,7 @@
       slot="title"
       v-model="searchValue"
       placeholder="请输入搜索关键词"
+      @focus="handleFocus"
     />
     <template slot="right">
       <van-icon name="chat-o" size="22" />
@@ -31,7 +32,12 @@ export default {
     onClickLeft() {},
     onClickRight() {},
     onSearch() {},
-    onCancel() {}
+    onCancel() {},
+    handleFocus() {
+      this.$router.push({
+        path: '/search'
+      });
+    }
   }
 };
 </script>

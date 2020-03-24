@@ -168,7 +168,11 @@ export default {
   },
   methods: {
     handleBack() {
-      this.$router.back();
+      if (this.$route.query.from) {
+        this.$router.push(`/${this.$route.query.from}`);
+      } else {
+        this.$router.back();
+      }
     },
     handleShare() {
       this.$router.back();

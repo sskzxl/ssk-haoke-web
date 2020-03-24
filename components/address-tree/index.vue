@@ -15,8 +15,8 @@
     data() {
       return {
         cityList: [],
-        activeIndex: 0,
-        activeId: 0
+        activeIndex: '',
+        activeId: ''
       };
     },
     props: {
@@ -36,7 +36,7 @@
         return this.position.district;
       }*/
     },
-    mounted() {
+  mounted() {
       getCityList()
         .then(res => {
           this.cityList.push(
@@ -44,9 +44,13 @@
               return {
                 text: city.label,
                 id: idx,
-                children: city.child.map((c, cIdx) => {
-                  return {text: c.label, id: cIdx}
-                })
+                children: [{
+                  text: '无限',
+                  value: '',
+                  id: '无限'
+                }].concat(city.child.map((c, cIdx) => {
+                  return {value: c.label, text: c.label, id: cIdx}
+                }))
               };
             })
           );

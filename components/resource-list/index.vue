@@ -2,49 +2,68 @@
   <div class="hk-resources">
     <van-row style="position: sticky;top: 50px;text-align: center;" v-if="filter">
       <van-col :span="6">
-        <van-dropdown-menu close-on-click-outside >
+        <van-dropdown-menu close-on-click-outside>
           <van-dropdown-item title="地区" ref="address">
-            <AddressTree :addressList="filterAddress" @filter-change="handleFilterChange"></AddressTree>
+            <AddressTree
+              :addressList="filterAddress"
+              @filter-change="handleFilterChange">
+            </AddressTree>
           </van-dropdown-item>
         </van-dropdown-menu>
       </van-col>
       <van-col :span="6">
         <van-dropdown-menu>
-          <van-dropdown-item title="方式" :options="types"/>
+          <van-dropdown-item
+            title="方式"
+            :options="types"
+            v-model="filterOptions.rentMethod"
+            @change="handleRentMethodChange"/>
         </van-dropdown-menu>
       </van-col>
       <van-col :span="6">
         <van-dropdown-menu>
-          <van-dropdown-item v-model="filterOptions.rent" title="租金" :options="prices" @change="handleRentChange"/>
+          <van-dropdown-item
+            v-model="rent"
+            title="租金"
+            :options="prices"
+            @change="handleRentChange"/>
         </van-dropdown-menu>
       </van-col>
       <van-col :span="6">
         <van-dropdown-menu>
           <van-dropdown-item title="筛选" ref="item">
-            <AddressTree @changeFilter="handleFilterChange"></AddressTree>
+            <AddressTree
+              @changeFilter="handleFilterChange">
+            </AddressTree>
           </van-dropdown-item>
         </van-dropdown-menu>
       </van-col>
     </van-row>
 
     <div class="hk-recommend__list">
-      <van-loading v-if="isLoading" />
-      <div v-else>
+      <van-list
+        class="hk-messages"
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+      >
         <ResourceItem
           v-for="item in resources"
           :key="item.id"
           :data="item"
         ></ResourceItem>
-        <p v-if="resources.length === 0 && isLoading && filterType === 0" style="padding: 20px 0;">暂无推荐</p>
-      </div>
+        <!--        <p v-if="resources.length === 0 && filterType === 0" style="padding: 20px 0;">暂无推荐</p>-->
+      </van-list>
     </div>
   </div>
 </template>
 
 <script>
-  import { mapState } from "vuex";
+  import {mapState} from "vuex";
   import ResourceItem from "~/components/resource-item";
   import AddressTree from "~/components/address-tree";
+  import {getResources} from "~/plugins/apis";
 
   export default {
     components: {
@@ -53,12 +72,18 @@
     },
     data() {
       return {
-        isLoading: false,
+        loading: false,
+        finished: false,
+        pageNum: 1,
+        pageSize: 10,
+        resources: [],
         filterType: 0,
+        rent: {},
         filterOptions: {
           address: "",
-          type: "",
-          rent: "",
+          upPrice: "",
+          lowPrice: "",
+          rentMethod: 0,
         },
         types: [
           {text: "不限", value: 0},
@@ -79,10 +104,6 @@
       };
     },
     props: {
-      data: {
-        type: Array,
-        default: () => []
-      },
       showCount: {
         type: Number,
         default: 0
@@ -99,7 +120,7 @@
     },
     computed: {
       ...mapState(["position"]),
-      resources() {
+      /*resources() {
         if (this.data.length) {
           this.isLoading = false;
         }
@@ -108,12 +129,62 @@
         } else {
           return this.data;
         }
-      }
+      }*/
     },
     methods: {
-      handleRentChange(value) {
+      getResources(filterOptions) {
+        this.loading = true;
+
+        getResources({
+          pageNum: this.pageNum,
+          pageSize: this.showCount || this.pageSize,
+          filter: filterOptions
+        }).then(({data}) => {
+          // this.resources = data ? data.records : [];
+          data.records.forEach(item => {
+            this.resources.push(item);
+          });
+          // 加载状态结束
+          this.loading = false;
+
+          // 数据全部加载完成
+          if (data.records.length === 0 || this.showCount) {
+            this.finished = true;
+          } else {
+            this.finished = false;
+          }
+          this.pageNum++;
+        });
+      },
+      reloadFilter() {
+        this.resources = [];
+        this.pageNum = 1;
+      },
+      handleRentChange(val) {
         this.isLoading = true;
-        this.$emit('filter-change', this.filterOptions);
+        this.reloadFilter();
+        if (val) {
+          if (val.includes('-')) {
+            this.filterOptions.upPrice = val.slice(1);
+          }
+          if (val.includes('+')) {
+            this.filterOptions.lowPrice = val.slice(1)
+          }
+          if (val.includes('_')) {
+            this.filterOptions.lowPrice = val.split('_')[0];
+            this.filterOptions.upPrice = val.split('_')[1];
+          }
+        } else {
+          this.filterOptions.lowPrice = '';
+          this.filterOptions.upPrice = '';
+        }
+        console.log(JSON.parse(JSON.stringify(this.filterOptions)))
+        this.getResources(JSON.parse(JSON.stringify(this.filterOptions)));
+      },
+      handleRentMethodChange() {
+        this.isLoading = true;
+        this.reloadFilter();
+        this.getResources(JSON.parse(JSON.stringify(this.filterOptions)));
       },
       handleFilter(type) {
         this.isLoading = true;
@@ -124,9 +195,13 @@
         }
       },
       handleFilterChange(area) {
-        this.filterOptions.address = area.text;
+        this.reloadFilter();
+        this.filterOptions.address = area.value;
         this.$refs.address.toggle(false);
-        this.$emit('filter-change', this.filterOptions);
+        this.getResources(JSON.parse(JSON.stringify(this.filterOptions)));
+      },
+      onLoad() {
+        this.getResources(JSON.parse(JSON.stringify(this.filterOptions)));
       }
     }
   };

@@ -96,10 +96,7 @@
       <h4>推荐房源</h4>
       <div class="hk-module__inner">
         <ResourceList
-          :showCount="4"
-          :filterAddress="cityList"
-          :data="resources"
-          @filter-change="handleFilterChange"/>
+          :showCount="4"/>
       </div>
     </div>
   </div>
@@ -110,7 +107,7 @@
   import MainNav from "~/components/MainNav";
   import ResourceList from "~/components/resource-list";
   import {getResources, getBanners, getCityList} from "~/plugins/apis";
-
+  import config from "~/app.config";
   const APIData = [
     {
       label: 1,
@@ -154,19 +151,13 @@
     },
     data() {
       return {
-        resources: [],
         cityList: []
       };
     },
     created() {
-      this.getResources({
-        filter: '{}',
-        pageNum: 1,
-        pageSize: 4
-      });
     },
     mounted() {
-      var geolocation = new qq.maps.Geolocation("OHSBZ-HQEY6-IWJSQ-M5IER-4X4Q6-THBG4", "haoke_front");
+      const geolocation = new qq.maps.Geolocation(config.txMapKey, config.txMapName);
       geolocation.getLocation((position) => {
         let city = position.city.includes('市') && position.city.slice(0, -1);
         // alert(JSON.stringify(position))
@@ -178,35 +169,6 @@
       });
     },
     methods: {
-      // ...mapActions(),
-      getResources(params) {
-        getResources(params).then(({data}) => {
-          this.resources = data ? data.records : [];
-        });
-      },
-      handleFilterChange(filterOptions) {
-        console.log('filter-change')
-        let params = {upPrice: '', lowPrice: ''};
-        if (filterOptions.rent) {
-          if (filterOptions.rent.includes('-')) {
-            params.upPrice = filterOptions.rent.slice(1);
-          }
-          if (filterOptions.rent.includes('+')) {
-            params.lowPrice = filterOptions.rent.slice(1)
-          }
-          if (filterOptions.rent.includes('_')) {
-            params.lowPrice = filterOptions.rent.split('_')[0];
-            params.upPrice = filterOptions.rent.split('_')[1];
-          }
-        }
-        filterOptions.rent = params;
-        this.resources = [];
-        this.getResources({
-          filter: `${JSON.stringify(filterOptions)}`,
-          pageNum: 1,
-          pageSize: 4
-        })
-      }
     }
   };
 </script>
