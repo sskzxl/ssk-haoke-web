@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 
 module.exports = {
   mode: 'spa',
@@ -13,6 +14,12 @@ module.exports = {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+    ],
+    script: [
+      {
+        src: "https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js",
+        ssr: false,
+      }
     ]
   },
   /*
@@ -55,8 +62,6 @@ module.exports = {
     ** You can extend webpack config here
     */
     vendor: ['axios'],
-    extend (config, ctx) {
-    }
   },
   axios: {
     proxy: true,
@@ -65,7 +70,7 @@ module.exports = {
   },
   proxy: {
     '/api': {
-      target: 'http://sskmall.natapp1.cc',
+      target: 'http://haoke.natapp1.cc',
       pathRewrite: {
         '^/api': '/'
       }
