@@ -1,3 +1,4 @@
+import config from "~/app.config";
 const TXMap = {
   map: undefined, // 地图对象
   overlays: [], // 所有覆盖物
@@ -120,6 +121,27 @@ const TXMap = {
     if (this.listener) {
       window.qq.maps.event.removeListener(this.listener)
     }
+  },
+  getLocation() {
+    const ErrorText = '获取定位失败';
+    return new Promise((resolve, reject) => {
+      if (!qq && !qq.maps) {
+        console.error(ErrorText);
+        return reject(ErrorText);
+      }
+      const geolocation = new qq.maps.Geolocation(
+        config.txMapKey,
+        config.txMapName
+      );
+      geolocation.getLocation((position) => {
+          resolve(position)
+        },
+        (error) => {
+          reject(ErrorText);
+        }
+      );
+  
+    })
   }
 };
 

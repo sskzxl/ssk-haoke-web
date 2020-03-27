@@ -38,6 +38,7 @@ module.exports = {
   plugins: [
     '~plugins/vant-ui.js',
     '~plugins/http.js',
+    '~plugins/utils.js',
   ],
   router: {
     middleware: 'auth'

@@ -82,7 +82,7 @@ export const mutations = {
     state.position.city = value;
   },
   setDistrict(state, value) {
-    state.position.dirstrict = value;
+    state.position.district = value;
   },
 };
 

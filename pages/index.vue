@@ -107,7 +107,6 @@
   import MainNav from "~/components/MainNav";
   import ResourceList from "~/components/resource-list";
   import {getResources, getBanners, getCityList} from "~/plugins/apis";
-  import config from "~/app.config";
   const APIData = [
     {
       label: 1,
@@ -157,16 +156,6 @@
     created() {
     },
     mounted() {
-      const geolocation = new qq.maps.Geolocation(config.txMapKey, config.txMapName);
-      geolocation.getLocation((position) => {
-        let city = position.city.includes('市') && position.city.slice(0, -1);
-        // alert(JSON.stringify(position))
-        this.$store.commit('setCity', city);
-        this.$store.commit('setDistrict', position.district);
-      }, () => {
-        this.$store.commit('setCity', '定位失败');
-        this.$toast('定位失败')
-      });
     },
     methods: {
     }

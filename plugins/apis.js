@@ -21,3 +21,7 @@ export function getCityList() {
 export function getLocation() {
   return http.get("http://ip-api.com/json", {});
 }
+
+export function getSearch(keyword, page = 1) {
+  return http.get("/api/search", { params: { keyword, page }});
+}

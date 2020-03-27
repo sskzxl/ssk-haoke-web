@@ -1,7 +1,7 @@
 <template>
   <van-nav-bar fixed class="hk-navbar">
     <span slot="left">
-      {{ position.city }}
+      {{ position.city || '获取中' }}
       <van-icon name="arrow-down" />
     </span>
     <van-search
@@ -17,7 +17,8 @@
 </template>
 
 <script>
-  import {mapState} from "vuex";
+import { mapState } from "vuex";
+import TXMap from "~/plugins/txMap";
 export default {
   name: "HeaderSearch",
   data() {
@@ -26,7 +27,19 @@ export default {
     };
   },
   computed: {
-    ...mapState(['position'])
+    ...mapState(["position"])
+  },
+  created() {
+    TXMap.getLocation()
+      .then(position => {
+        let city = position.city.includes("市") && position.city.slice(0, -1);
+        this.$store.commit("setCity", city);
+        this.$store.commit("setDistrict", position.district);
+      })
+      .catch(error => {
+        this.$store.commit("setCity", '北京');
+        this.$toast(error);
+      });
   },
   methods: {
     onClickLeft() {},
@@ -35,7 +48,7 @@ export default {
     onCancel() {},
     handleFocus() {
       this.$router.push({
-        path: '/search'
+        path: "/search"
       });
     }
   }

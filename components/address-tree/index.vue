@@ -43,13 +43,13 @@
             ...res.data.map((city, idx) => {
               return {
                 text: city.label,
-                id: idx,
+                id: city.label,
                 children: [{
                   text: '无限',
-                  value: '',
-                  id: '无限'
+                  value: ``,
+                  id: `${city.label}无限`
                 }].concat(city.child.map((c, cIdx) => {
-                  return {value: c.label, text: c.label, id: cIdx}
+                  return {value: c.label, text: c.label, id: c.label}
                 }))
               };
             })
@@ -67,7 +67,7 @@
     methods: {
       handleAddressChange(val) {
         this.$emit('filter-change', val);
-      }
+      },
     }
   };
 </script>

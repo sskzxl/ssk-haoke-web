@@ -1,40 +1,44 @@
 <template>
   <div class="hk-resources">
-    <van-row style="position: sticky;top: 50px;text-align: center;" v-if="filter">
-      <van-col :span="6">
+    <van-row
+      style="position: sticky;top: 50px;text-align: center;"
+      v-if="filter"
+    >
+      <van-col :span="8">
         <van-dropdown-menu close-on-click-outside>
           <van-dropdown-item title="地区" ref="address">
             <AddressTree
               :addressList="filterAddress"
-              @filter-change="handleFilterChange">
+              @filter-change="handleFilterChange"
+            >
             </AddressTree>
           </van-dropdown-item>
         </van-dropdown-menu>
       </van-col>
-      <van-col :span="6">
+      <van-col :span="8">
         <van-dropdown-menu>
           <van-dropdown-item
             title="方式"
             :options="types"
             v-model="filterOptions.rentMethod"
-            @change="handleRentMethodChange"/>
+            @change="handleRentMethodChange"
+          />
         </van-dropdown-menu>
       </van-col>
-      <van-col :span="6">
+      <van-col :span="8">
         <van-dropdown-menu>
           <van-dropdown-item
             v-model="rent"
             title="租金"
             :options="prices"
-            @change="handleRentChange"/>
+            @change="handleRentChange"
+          />
         </van-dropdown-menu>
       </van-col>
-      <van-col :span="6">
+      <van-col :span="6" v-if="false">
         <van-dropdown-menu>
           <van-dropdown-item title="筛选" ref="item">
-            <AddressTree
-              @changeFilter="handleFilterChange">
-            </AddressTree>
+            <AddressTree @changeFilter="handleFilterChange"> </AddressTree>
           </van-dropdown-item>
         </van-dropdown-menu>
       </van-col>
@@ -60,155 +64,160 @@
 </template>
 
 <script>
-  import {mapState} from "vuex";
-  import ResourceItem from "~/components/resource-item";
-  import AddressTree from "~/components/address-tree";
-  import {getResources} from "~/plugins/apis";
+import { mapState } from "vuex";
+import ResourceItem from "~/components/resource-item";
+import AddressTree from "~/components/address-tree";
+import { getResources } from "~/plugins/apis";
 
-  export default {
-    components: {
-      ResourceItem,
-      AddressTree
-    },
-    data() {
-      return {
-        loading: false,
-        finished: false,
-        pageNum: 1,
-        pageSize: 10,
-        resources: [],
-        filterType: 0,
-        rent: {},
-        filterOptions: {
-          address: "",
-          upPrice: "",
-          lowPrice: "",
-          rentMethod: 0,
-        },
-        types: [
-          {text: "不限", value: 0},
-          {text: "整租", value: 1},
-          {text: "合租", value: 2}
-        ],
-        prices: [
-          {text: "不限", value: ''},
-          {text: "600以下", value: '-600'},
-          {text: "600_1000元", value: '600_1000'},
-          {text: "1000_1500元", value: '1000_1500'},
-          {text: "1500_2000元", value: '1500_2000'},
-          {text: "2000_3000元", value: '2000_3000'},
-          {text: "3000_5000元", value: '3000_5000'},
-          {text: "5000_8000元", value: '5000_8000'},
-          {text: "8000以上", value: '+8000'}
-        ]
-      };
-    },
-    props: {
-      showCount: {
-        type: Number,
-        default: 0
+export default {
+  components: {
+    ResourceItem,
+    AddressTree
+  },
+  data() {
+    return {
+      loading: false,
+      finished: false,
+      pageNum: 1,
+      pageSize: 10,
+      resources: [],
+      filterType: 0,
+      rent: {},
+      filterOptions: {
+        address: "",
+        upPrice: "",
+        lowPrice: "",
+        rentMethod: 0
       },
-      filterAddress: {
-        type: Array,
-        default: () => []
-      },
-      filter: {
-        type: Boolean,
-        required: false,
-        default: true,
-      },
+      types: [
+        { text: "不限", value: 0 },
+        { text: "整租", value: 1 },
+        { text: "合租", value: 2 }
+      ],
+      prices: [
+        { text: "不限", value: "" },
+        { text: "600以下", value: "-600" },
+        { text: "600_1000元", value: "600_1000" },
+        { text: "1000_1500元", value: "1000_1500" },
+        { text: "1500_2000元", value: "1500_2000" },
+        { text: "2000_3000元", value: "2000_3000" },
+        { text: "3000_5000元", value: "3000_5000" },
+        { text: "5000_8000元", value: "5000_8000" },
+        { text: "8000以上", value: "+8000" }
+      ]
+    };
+  },
+  props: {
+    showCount: {
+      type: Number,
+      default: 0
     },
-    computed: {
-      ...mapState(["position"]),
-      /*resources() {
-        if (this.data.length) {
-          this.isLoading = false;
-        }
-        if (this.showCount) {
-          return this.data.slice(0, this.showCount);
-        } else {
-          return this.data;
-        }
-      }*/
+    filterAddress: {
+      type: Array,
+      default: () => []
     },
-    methods: {
-      getResources(filterOptions) {
-        this.loading = true;
+    filter: {
+      type: Boolean,
+      required: false,
+      default: true
+    }
+  },
+  computed: {
+    ...mapState(["position"])
+  },
+  methods: {
+    getResources(filterOptions) {
+      this.loading = true;
 
-        getResources({
-          pageNum: this.pageNum,
-          pageSize: this.showCount || this.pageSize,
-          filter: filterOptions
-        }).then(({data}) => {
-          // this.resources = data ? data.records : [];
-          data.records.forEach(item => {
-            this.resources.push(item);
-          });
-          // 加载状态结束
-          this.loading = false;
-
-          // 数据全部加载完成
-          if (data.records.length === 0 || this.showCount) {
-            this.finished = true;
-          } else {
-            this.finished = false;
-          }
-          this.pageNum++;
+      getResources({
+        pageNum: this.pageNum,
+        pageSize: this.showCount || this.pageSize,
+        filter: filterOptions
+      }).then(({ data }) => {
+        // this.resources = data ? data.records : [];
+        data.records.forEach(item => {
+          this.resources.push(item);
         });
-      },
-      reloadFilter() {
-        this.resources = [];
-        this.pageNum = 1;
-      },
-      handleRentChange(val) {
-        this.isLoading = true;
-        this.reloadFilter();
-        if (val) {
-          if (val.includes('-')) {
-            this.filterOptions.upPrice = val.slice(1);
-          }
-          if (val.includes('+')) {
-            this.filterOptions.lowPrice = val.slice(1)
-          }
-          if (val.includes('_')) {
-            this.filterOptions.lowPrice = val.split('_')[0];
-            this.filterOptions.upPrice = val.split('_')[1];
-          }
+        // 加载状态结束
+        this.loading = false;
+
+        // 数据全部加载完成
+        if (data.records.length === 0 || this.showCount) {
+          this.finished = true;
         } else {
-          this.filterOptions.lowPrice = '';
-          this.filterOptions.upPrice = '';
+          this.finished = false;
         }
-        console.log(JSON.parse(JSON.stringify(this.filterOptions)))
+        this.pageNum++;
+      });
+    },
+    reloadFilter() {
+      this.resources = [];
+      this.pageNum = 1;
+    },
+    handleRentChange(val) {
+      this.isLoading = true;
+      this.reloadFilter();
+      if (val) {
+        if (val.includes("-")) {
+          this.filterOptions.upPrice = val.slice(1);
+        }
+        if (val.includes("+")) {
+          this.filterOptions.lowPrice = val.slice(1);
+        }
+        if (val.includes("_")) {
+          this.filterOptions.lowPrice = val.split("_")[0];
+          this.filterOptions.upPrice = val.split("_")[1];
+        }
+      } else {
+        this.filterOptions.lowPrice = "";
+        this.filterOptions.upPrice = "";
+      }
+      console.log(JSON.parse(JSON.stringify(this.filterOptions)));
+      this.getResources(JSON.parse(JSON.stringify(this.filterOptions)));
+    },
+    handleRentMethodChange() {
+      this.isLoading = true;
+      this.reloadFilter();
+      this.getResources(JSON.parse(JSON.stringify(this.filterOptions)));
+    },
+    handleFilter(type) {
+      this.isLoading = true;
+      if (type === this.filterType) {
+        this.filterType = 0;
+      } else {
+        this.filterType = type;
+      }
+    },
+    handleFilterChange(area) {
+      this.reloadFilter();
+      this.filterOptions.address = area.value;
+      this.$refs.address.toggle(false);
+      console.log(JSON.parse(JSON.stringify(this.filterOptions)));
+      
+      this.getResources(JSON.parse(JSON.stringify(this.filterOptions)));
+    },
+    onLoad() {
+      console.log(JSON.parse(JSON.stringify(this.filterOptions)));
+      if (this.filterOptions.address) {
         this.getResources(JSON.parse(JSON.stringify(this.filterOptions)));
-      },
-      handleRentMethodChange() {
-        this.isLoading = true;
-        this.reloadFilter();
-        this.getResources(JSON.parse(JSON.stringify(this.filterOptions)));
-      },
-      handleFilter(type) {
-        this.isLoading = true;
-        if (type === this.filterType) {
-          this.filterType = 0;
+      } else {
+        if (this.position.city) {
+          this.filterOptions.address = this.position.city;
+          this.onLoad();
         } else {
-          this.filterType = type;
+          setTimeout(() => {
+            this.onLoad();
+          }, 100);
         }
-      },
-      handleFilterChange(area) {
-        this.reloadFilter();
-        this.filterOptions.address = area.value;
-        this.$refs.address.toggle(false);
-        this.getResources(JSON.parse(JSON.stringify(this.filterOptions)));
-      },
-      onLoad() {
-        this.getResources(JSON.parse(JSON.stringify(this.filterOptions)));
+        return;
       }
     }
-  };
+  }
+};
 </script>
 
 <style lang="scss">
-  .hk-recommend__list {
-    text-align: center;
-  }
+.hk-recommend__list {
+  text-align: center;
+}
 </style>
