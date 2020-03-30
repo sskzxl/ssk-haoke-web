@@ -1,7 +1,7 @@
 <template>
   <van-nav-bar fixed class="hk-navbar">
-    <span slot="left">
-      {{ position.city || '获取中' }}
+    <span slot="left" @click="handleJumpCity">
+      {{ position.city || "获取中" }}
       <van-icon name="arrow-down" />
     </span>
     <van-search
@@ -30,19 +30,23 @@ export default {
     ...mapState(["position"])
   },
   created() {
-    TXMap.getLocation()
-      .then(position => {
-        let city = position.city.includes("市") && position.city.slice(0, -1);
-        this.$store.commit("setCity", city);
-        this.$store.commit("setDistrict", position.district);
-      })
-      .catch(error => {
-        this.$store.commit("setCity", '北京');
-        this.$toast(error);
-      });
+    if (!this.position.city) {
+      TXMap.getLocation()
+        .then(position => {
+          let city = position.city.includes("市") && position.city.slice(0, -1);
+          this.$store.commit("setCity", city);
+          this.$store.commit("setDistrict", position.district);
+        })
+        .catch(error => {
+          this.$store.commit("setCity", "北京");
+          this.$toast(error);
+        });
+    }
   },
   methods: {
-    onClickLeft() {},
+    handleJumpCity() {
+      this.$router.push("/city");
+    },
     onClickRight() {},
     onSearch() {},
     onCancel() {},

@@ -25,3 +25,7 @@ export function getLocation() {
 export function getSearch(keyword, page = 1) {
   return http.get("/api/search", { params: { keyword, page }});
 }
+
+export function getHouseByMap(params) {
+  return http.get("/api/house/map/", { params });
+}

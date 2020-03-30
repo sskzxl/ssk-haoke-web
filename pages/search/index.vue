@@ -33,11 +33,22 @@
         </nuxt-link>
       </div>
     </div>
+    <div style="text-align: center;padding: 20px 0;" v-if="loading">
+      <van-loading></van-loading>
+    </div>
     <div class="hk-search__hot" v-show="hotSearch.length">
-      <h6>别人热搜</h6>
+      <h6>当前搜索结果较少，您可以尝试以下搜索</h6>
       <van-row :gutter="10">
         <van-col v-for="hot in hotSearch" :key="hot.id">
-          <van-tag plain @click="handleHotSearch(hot)" >{{ hot }}</van-tag>
+          <van-tag plain @click="handleHotSearch(hot)">{{ hot }}</van-tag>
+        </van-col>
+      </van-row>
+    </div>
+    <div class="hk-search__hot" v-show="recommendWord.length">
+      <h6>热搜</h6>
+      <van-row :gutter="10">
+        <van-col v-for="hot in recommendWord" :key="hot.id">
+          <van-tag plain @click="handleHotSearch(hot)">{{ hot }}</van-tag>
         </van-col>
       </van-row>
     </div>
@@ -61,15 +72,17 @@
 <script>
 import { getSearch } from "~/plugins/apis";
 
-let _throttle = () => {};
+let _debounce = () => {};
 export default {
   name: "Search",
   layout: "basic",
   data() {
     return {
+      loading: false,
       searchValue: "",
       searchResult: [],
       hotSearch: [],
+      recommendWord: [],
       hots: [
         {
           name: "世茂深港国际中心1",
@@ -95,22 +108,29 @@ export default {
     };
   },
   created() {
-    _throttle = this._throttle(this.input, 300);
+    _debounce = this._debounce(this.input, 200);
+  },
+  mounted() {
+    getSearch("").then(res => {
+      this.recommendWord = res.data.recommendWord;
+      this.loading = false;
+    });
   },
   methods: {
     input(val) {
       getSearch(val).then(res => {
         this.searchResult = res.data.list;
+        this.loading = false;
         if (this.searchResult.length === 0) {
           this.hotSearch = res.data.hotWord;
         }
       });
     },
     handleInput(val) {
-      console.log(_throttle);
-      _throttle(val);
+      _debounce(val);
     },
     handleHotSearch(keyword) {
+      this.loading = true;
       this.searchValue = keyword;
       this.handleInput(keyword);
     }

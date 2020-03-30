@@ -24,13 +24,13 @@
       </van-swipe>
       <div style="background-color: #fff">
         <h2>{{ resource.title }}</h2>
-        <p class="hk-details__tags">
-          <van-tag v-for="item in resource.tags" :key="item" type="primary">{{
-            item
-          }}</van-tag>
-          <span class="hk-details__time">{{ resource.created }}发布</span>
-        </p>
       </div>
+      <p class="hk-details__tags">
+        <van-tag v-for="item in resource.tags" :key="item" type="primary">{{
+          item
+        }}</van-tag>
+        <span class="hk-details__time">{{ resource.created }}发布</span>
+      </p>
       <div style="padding: 0 10px 10px">
         <van-row :gutter="20" class="hk-details__info">
           <van-col span="8">
@@ -68,7 +68,7 @@
         </div>
       </div>
       <div class="hk-details__map">
-        <p>小区： 会同馆大街</p>
+        <p>小区： {{ resource.address }}</p>
         <div class="map-wrap"></div>
       </div>
       <div class="hk-details__thing">
@@ -112,16 +112,16 @@
             收藏
           </p>
         </van-col>
-        <van-col span="9">
+        <van-col span="18">
           <p><a href="联系房东">联系房东</a></p>
         </van-col>
-        <van-col span="9">
+        <!-- <van-col span="9">
           <p>
             <nuxt-link :to="{ path: '/subscribe', query: { resource_id: 1 } }"
               >预约看房</nuxt-link
             >
           </p>
-        </van-col>
+        </van-col> -->
       </van-row>
     </div>
   </div>
@@ -161,9 +161,9 @@ export default {
       resource: {}
     };
   },
-  asyncData({params}) {
+  asyncData({ params }) {
     return getResource(params.id).then(res => {
-      return {resource: res.data};
+      return { resource: res.data };
     });
   },
   methods: {
@@ -243,7 +243,7 @@ export default {
 }
 
 .hk-details__map p {
-  padding: 0 10px;
+  padding: 10px;
 }
 
 .hk-details__thing {
@@ -273,6 +273,9 @@ export default {
 }
 
 .hk-details__tags {
+  padding: 10px;
+  background-color: #fff;
+  overflow: hidden;
   margin-top: 10px;
 
   .van-tag {
