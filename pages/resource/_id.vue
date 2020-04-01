@@ -17,10 +17,10 @@
         :autoplay="3000"
         indicator-color="white"
       >
-        <van-swipe-item>1</van-swipe-item>
-        <van-swipe-item>2</van-swipe-item>
-        <van-swipe-item>3</van-swipe-item>
-        <van-swipe-item>4</van-swipe-item>
+        <van-swipe-item><img :src="`${imgUrl}/${resource.pic}`" /></van-swipe-item>
+        <van-swipe-item><img :src="`${imgUrl}/${resource.pic}`" /></van-swipe-item>
+        <van-swipe-item><img :src="`${imgUrl}/${resource.pic}`" /></van-swipe-item>
+        <van-swipe-item><img :src="`${imgUrl}/${resource.pic}`" /></van-swipe-item>
       </van-swipe>
       <div style="background-color: #fff">
         <h2>{{ resource.title }}</h2>
@@ -42,7 +42,7 @@
             <p>房型</p>
           </van-col>
           <van-col span="8">
-            <h4>{{ resource.coveredArea }}平米</h4>
+            <h4>{{ resource.useArea }}平米</h4>
             <p>面积</p>
           </van-col>
         </van-row>
@@ -130,6 +130,7 @@
 import ResourceList from "~/components/resource-list";
 import ChatUser from "~/components/chat-user";
 import { getResource } from "~/plugins/apis";
+import config from "~/app.config";
 const types = {
   1: "洗衣机",
   2: "冰箱",
@@ -158,7 +159,8 @@ export default {
       $types: types,
       $decoration: decoration,
       recommendList: [],
-      resource: {}
+      resource: {},
+      imgUrl:config.sourceUrl.img
     };
   },
   asyncData({ params }) {

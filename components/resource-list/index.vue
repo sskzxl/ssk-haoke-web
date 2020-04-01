@@ -97,12 +97,12 @@ export default {
       prices: [
         { text: "不限", value: "" },
         { text: "600以下", value: "-600" },
-        { text: "600_1000元", value: "600_1000" },
-        { text: "1000_1500元", value: "1000_1500" },
-        { text: "1500_2000元", value: "1500_2000" },
-        { text: "2000_3000元", value: "2000_3000" },
-        { text: "3000_5000元", value: "3000_5000" },
-        { text: "5000_8000元", value: "5000_8000" },
+        { text: "600-1000元", value: "600_1000" },
+        { text: "1000-1500元", value: "1000_1500" },
+        { text: "1500-2000元", value: "1500_2000" },
+        { text: "2000-3000元", value: "2000_3000" },
+        { text: "3000-5000元", value: "3000_5000" },
+        { text: "5000-8000元", value: "5000_8000" },
         { text: "8000以上", value: "+8000" }
       ]
     };
@@ -193,7 +193,7 @@ export default {
       this.filterOptions.address = area.value;
       this.$refs.address.toggle(false);
       console.log(JSON.parse(JSON.stringify(this.filterOptions)));
-      
+
       this.getResources(JSON.parse(JSON.stringify(this.filterOptions)));
     },
     onLoad() {

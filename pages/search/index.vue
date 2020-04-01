@@ -45,7 +45,7 @@
       </van-row>
     </div>
     <div class="hk-search__hot" v-show="recommendWord.length">
-      <h6>热搜</h6>
+      <h6>看看大家都在找什么房子</h6>
       <van-row :gutter="10">
         <van-col v-for="hot in recommendWord" :key="hot.id">
           <van-tag plain @click="handleHotSearch(hot)">{{ hot }}</van-tag>
