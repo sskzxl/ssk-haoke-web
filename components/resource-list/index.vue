@@ -6,12 +6,18 @@
     >
       <van-col :span="8">
         <van-dropdown-menu close-on-click-outside>
-          <van-dropdown-item title="地区" ref="address">
-            <AddressTree
+          <van-dropdown-item
+            title="地区"
+            ref="address"
+            v-model="filterOptions.address"
+            :options="$data._cityList"
+            @change="handleFilterChange"
+          >
+            <!-- <AddressTree
               :addressList="filterAddress"
               @filter-change="handleFilterChange"
             >
-            </AddressTree>
+            </AddressTree> -->
           </van-dropdown-item>
         </van-dropdown-menu>
       </van-col>
@@ -67,7 +73,7 @@
 import { mapState } from "vuex";
 import ResourceItem from "~/components/resource-item";
 import AddressTree from "~/components/address-tree";
-import { getResources } from "~/plugins/apis";
+import { getResources, getCity } from "~/plugins/apis";
 
 export default {
   components: {
@@ -87,10 +93,10 @@ export default {
         address: "",
         upPrice: "",
         lowPrice: "",
-        rentMethod: 0
+        rentMethod: ""
       },
       types: [
-        { text: "不限", value: 0 },
+        { text: "不限", value: "" },
         { text: "整租", value: 1 },
         { text: "合租", value: 2 }
       ],
@@ -104,7 +110,8 @@ export default {
         { text: "3000-5000元", value: "3000_5000" },
         { text: "5000-8000元", value: "5000_8000" },
         { text: "8000以上", value: "+8000" }
-      ]
+      ],
+      _cityList: []
     };
   },
   props: {
@@ -125,7 +132,39 @@ export default {
   computed: {
     ...mapState(["position"])
   },
+  beforeCreate() {
+    console.log(this.$route);
+    
+  },
+  mounted() {},
   methods: {
+    getCity() {
+      getCity({
+        type: 1,
+        value: this.position.city
+      }).then(res => {
+        if (res.code === 1) {
+          this.$data._cityList.push(
+            ...res.data[0].pchilds[0].cchilds.map((city, idx) => {
+              return {
+                text: city.name,
+                value: city.name,
+              };
+            })
+          );
+        }
+
+        if (this.position.city) {
+          const c = this.position.city + "市";
+          this.activeIndex = this.$data._cityList.findIndex(
+            city => city.text === c
+          );
+          if (this.activeIndex === -1) {
+            this.activeIndex = 0;
+          }
+        }
+      });
+    },
     getResources(filterOptions) {
       this.loading = true;
 
@@ -172,7 +211,6 @@ export default {
         this.filterOptions.lowPrice = "";
         this.filterOptions.upPrice = "";
       }
-      console.log(JSON.parse(JSON.stringify(this.filterOptions)));
       this.getResources(JSON.parse(JSON.stringify(this.filterOptions)));
     },
     handleRentMethodChange() {
@@ -188,12 +226,10 @@ export default {
         this.filterType = type;
       }
     },
-    handleFilterChange(area) {
+    handleFilterChange(value) {
       this.reloadFilter();
-      this.filterOptions.address = area.value;
+      this.filterOptions.address = value;
       this.$refs.address.toggle(false);
-      console.log(JSON.parse(JSON.stringify(this.filterOptions)));
-
       this.getResources(JSON.parse(JSON.stringify(this.filterOptions)));
     },
     onLoad() {
@@ -203,6 +239,7 @@ export default {
       } else {
         if (this.position.city) {
           this.filterOptions.address = this.position.city;
+          this.getCity();
           this.onLoad();
         } else {
           setTimeout(() => {

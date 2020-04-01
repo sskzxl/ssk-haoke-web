@@ -66,7 +66,8 @@ export default {
       this.lastZoom = zoom;
     },
     handleBack() {
-      this.$router.back();
+      console.log(this.$router);
+      this.$router.push('/resource')
     },
     handleShare() {}
   }

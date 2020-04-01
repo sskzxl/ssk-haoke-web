@@ -128,15 +128,15 @@ export default {
       });
     },
     handleSetCity() {
-      if (!this.position) {
+      if (!this.pos) {
         return;
       }
       this.$router.push({
         path: `/resource`,
-        query: { city: this.position.city }
+        query: { city: this.pos.city }
       });
-      this.$store.commit("setCity", this.position.city);
-      this.$store.commit("setDistrict", this.position.district);
+      this.$store.commit("setCity", this.pos.city);
+      this.$store.commit("setDistrict", this.pos.district);
     },
     handleJumpCity(code) {
       window.scrollTo(

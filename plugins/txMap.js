@@ -14,8 +14,6 @@ const TXMap = {
   },
   drawOverlay(options) {
     let _this = this;
-    console.log(options);
-    
     this.sourceData = options.data || [];
     // 绘制覆盖物之前，清理之前绘制的覆盖物
     this.clearOverlays();
@@ -43,7 +41,7 @@ const TXMap = {
               mapTypeControl: false
             }
           );
-          
+
           // idle 事件, 地图缩放或平移之后触发该事件
           _this.listener = window.qq.maps.event.addListener(
             _this.map,
@@ -66,7 +64,6 @@ const TXMap = {
             this.name = name; // 区域名
             this.houseCount = houseCount; // 房源数量
           };
-          window.MarkerCluster = 
           // 继承 Overlay
           window.CustomOverlay.prototype = new window.qq.maps.Overlay();
           // 自定义覆盖物构造函数，定义覆盖为的 DOM 结构
@@ -104,25 +101,49 @@ const TXMap = {
             divStyle.top = pixel.y - 53 + "px";
             divStyle.left = pixel.x - 30 + "px";
           };
+          // 根据接口数据绘制覆盖物
+          // if (_this.sourceData.length > 0) {
+          //   _this.sourceData.map(item => {
+          //     let customOverlay = new window.CustomOverlay(
+          //       item.y,
+          //       item.x,
+          //       item.title,
+          //       10
+          //       /*  item.latitude,
+          //         item.longitude,
+          //         item.name,
+          //         item.house_count */
+          //     );
+          //     customOverlay.setMap(_this.map);
+          //     this.console.log(customOverlay);
+          //   });
+          // }
         }
 
-        // 根据接口数据绘制覆盖物
-        if (_this.sourceData.length > 0) {
-          _this.sourceData.map(item => {
-            let customOverlay = new window.CustomOverlay(
-              item.y,
-              item.x,
-              item.title,
-              10
-             /*  item.latitude,
-              item.longitude,
-              item.name,
-              item.house_count */
-            );
-            customOverlay.setMap(_this.map);
-            this.console.log(customOverlay)
-          });
+        function MarkerCluster() {
+          const markers = new qq.maps.MVCArray();
+          // 根据接口数据绘制覆盖物
+          if (_this.sourceData.length > 0) {
+            _this.sourceData.map(item => {
+              markers.push(
+                new qq.maps.Marker({
+                  position: new qq.maps.LatLng(item.y, item.x),
+                  map: _this.map
+                })
+              );
+            });
+            new qq.maps.MarkerCluster({
+              map: _this.map,
+              markers: markers,
+              minimumClusterSize: 2, //默认2
+              zoomOnClick: true, //默认为true
+              gridSize: 30, //默认60
+              averageCenter: true, //默认false
+              maxZoom: 18, //默认18
+            });
+          }
         }
+        MarkerCluster();
       };
       // 地图 api 如果没有引入则调用 getApi 方法，否则直接调用 initMap ()
       if (window.qq && window.qq.maps && window.qq.maps.LatLng) {

@@ -1,11 +1,11 @@
 <template>
   <div class="hk-nav">
     <van-row :gutter="10">
-      <van-col :span="6">
+      <van-col :span="6" @click="handleJump(1)">
         <van-icon name="wap-home-o" size="40px" color="#51a8ff" />
         <h5>整租</h5>
       </van-col>
-      <van-col :span="6">
+      <van-col :span="6" @click="handleJump(2)">
         <van-icon name="hotel-o" size="40px" color="#5aa218" />
         <h5>合租</h5>
       </van-col>
@@ -24,13 +24,25 @@
 </template>
 
 <script>
-export default {};
+export default {
+  methods: {
+    handleJump(type) {
+      this.$store.commit("setNav", 1);
+      this.$router.push({
+        path: "/resource",
+        query: {
+          type
+        }
+      });
+    }
+  }
+};
 </script>
 
 <style lang="scss">
 .hk-nav {
-    padding: 20px 10px;
-    background-color: #fff;
-    text-align: center;
+  padding: 20px 10px;
+  background-color: #fff;
+  text-align: center;
 }
 </style>

@@ -107,34 +107,7 @@
   import MainNav from "~/components/MainNav";
   import ResourceList from "~/components/resource-list";
   import {getResources, getBanners, getCityList} from "~/plugins/apis";
-  const APIData = [
-    {
-      label: 1,
-      array: [
-        {
-          label: 3,
-          value: "朝阳区"
-        },
-        {
-          label: 4,
-          value: "海淀区"
-        }
-      ]
-    },
-    {
-      label: 2,
-      array: [
-        {
-          label: 5,
-          value: "测试1"
-        },
-        {
-          label: 6,
-          value: "测试2"
-        }
-      ]
-    }
-  ];
+
   export default {
     components: {
       MainNav,

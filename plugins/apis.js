@@ -1,13 +1,13 @@
 import { http } from "~/plugins/http";
 
 export function getResource(id) {
-    return http.get(`/api/house/resources/${id}`)
+  return http.get(`/api/house/resources/${id}`);
 }
 
 export function getResources(params) {
-    return http.get('/api/house/resources', {
-        params,
-    })
+  return http.get("/api/house/resources", {
+    params
+  });
 }
 
 export function getBanners() {
@@ -23,9 +23,21 @@ export function getLocation() {
 }
 
 export function getSearch(keyword, page = 1) {
-  return http.get("/api/search", { params: { keyword, page }});
+  return http.get("/api/search", { params: { keyword, page } });
 }
 
 export function getHouseByMap(params) {
   return http.get("/api/house/map/", { params });
+}
+
+export function getCity(params) {
+  params = Object.assign(
+    {},
+    {
+      app_id: "hopi8sosqpjubhml",
+      app_secret: "N3k4S0lQS2dJV0UrcFlWc1czNTBBQT09"
+    },
+    params
+  );
+  return http.get("https://www.mxnzp.com/api/address/search", { params });
 }
