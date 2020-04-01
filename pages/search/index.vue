@@ -22,9 +22,7 @@
           <van-row>
             <van-col :span="20">
               <p class="hk-search__title" v-html="item.title"></p>
-              <p class="hk-search__address">
-                汕头市濠江区享信息
-              </p>
+              <p class="hk-search__address" v-html="item.address"></p>
             </van-col>
             <van-col :span="4">
               <span class="hk-search__rent">{{ item.rent }}/㎡</span>
@@ -45,7 +43,7 @@
       </van-row>
     </div>
     <div class="hk-search__hot" v-show="recommendWord.length">
-      <h6>看看大家都在找什么房子</h6>
+      <h6>看看大家都在搜什么</h6>
       <van-row :gutter="10">
         <van-col v-for="hot in recommendWord" :key="hot.id">
           <van-tag plain @click="handleHotSearch(hot)">{{ hot }}</van-tag>
