@@ -15,6 +15,7 @@
 import config from "~/app.config";
 import txMap from "~/plugins/txMap";
 import { getHouseByMap } from "~/plugins/apis";
+let histryData = []
 export default {
   layout: "basic",
   name: "Map",
@@ -27,47 +28,37 @@ export default {
   },
   mounted() {
     this.$refs.MapWrap.style.height = window.innerHeight - 51 + "px";
-    txMap.getLocation()
-      .then(res => {
-        getHouseByMap({
-          lat: res.lat,
-          lng: res.lng,
-          zoom: this.lastZoom
-        }).then(resource => {
-          txMap.drawOverlay({
-            lat: res.lat,
-            lng: res.lng,
-            containerId: "Map",
-            data: resource.data.list/* [
-              {
-                TypeId: "401",
-                name: "福田",
-                latitude: "22.529945797603",
-                longitude: "114.06574904891",
-                house_count: 17
-              },
-            ] */,
-            callback: this.handleDile.bind(this)
-          });
-        });
-      });
-
+    txMap.getLocation().then(res => {
+      this.getHouseByMap(res);
+    });
   },
   methods: {
-    getHouseByMap() {},
+    getHouseByMap(res) {
+      getHouseByMap({
+        lat: res.lat,
+        lng: res.lng,
+        zoom: this.lastZoom,
+      }).then(resource => {
+        histryData = histryData.concat(resource.data.list)
+        txMap.drawOverlay({
+          lat: res.lat,
+          lng: res.lng,
+          containerId: "Map",
+          zoomControl: true,
+          zoomControlOptions: {
+            position: 9,
+          },
+          data: resource.data.list || [],
+          callback: this.handleDile.bind(this)
+        });
+      });
+    },
     handleDile(bounds, zoom) {
-      if (this.lastZoom >= 13 && zoom < 13) {
-        // 从第二层缩小回到第一层
-        this.getHouseByMap(this.districtUrl);
-      } else if (this.lastZoom < 13 && zoom >= 13) {
-        // 从第一层方法到第二层
-        this.getHouseByMap(this.bizcircleUrl);
-      }
+      this.getHouseByMap({lat: bounds.lat.minY, lng: bounds.lng.minX, zoom});
       this.lastZoom = zoom;
     },
     handleBack() {
-      console.log(this.$router);
-      this.$router.push('/resource')
+      this.$router.push("/resource");
     },
     handleShare() {}
   }

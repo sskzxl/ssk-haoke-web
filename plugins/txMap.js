@@ -23,9 +23,11 @@ const TXMap = {
       window.initMap = function() {
         if (_this.map === undefined) {
           // 地图对象为undefined时, 需要进行地图的绘制
+          delete options.data;
+                   
           _this.map = new window.qq.maps.Map(
             document.getElementById(options.containerId),
-            {
+            Object.assign({}, {
               // 初始化地图中心
               center: new window.qq.maps.LatLng(
                 options.lat || 22.702,
@@ -37,9 +39,10 @@ const TXMap = {
               minZoom: 10,
               // 停用缩放控件
               zoomControl: false,
+              
               // 停用地图类型控件
               mapTypeControl: false
-            }
+            }, options )
           );
 
           // idle 事件, 地图缩放或平移之后触发该事件

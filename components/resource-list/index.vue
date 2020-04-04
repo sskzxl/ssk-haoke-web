@@ -74,7 +74,7 @@ import { mapState } from "vuex";
 import ResourceItem from "~/components/resource-item";
 import AddressTree from "~/components/address-tree";
 import { getResources, getCity } from "~/plugins/apis";
-
+const MaxRequestCount = 20;
 export default {
   components: {
     ResourceItem,
@@ -88,6 +88,7 @@ export default {
       pageSize: 10,
       resources: [],
       filterType: 0,
+      retryCount: 0,
       rent: {},
       filterOptions: {
         address: "",
@@ -233,7 +234,6 @@ export default {
       this.getResources(JSON.parse(JSON.stringify(this.filterOptions)));
     },
     onLoad() {
-      console.log(JSON.parse(JSON.stringify(this.filterOptions)));
       if (this.filterOptions.address) {
         this.getResources(JSON.parse(JSON.stringify(this.filterOptions)));
       } else {
@@ -242,9 +242,14 @@ export default {
           this.getCity();
           this.onLoad();
         } else {
-          setTimeout(() => {
-            this.onLoad();
-          }, 100);
+          if (this.retryCount < MaxRequestCount) {
+            this.retryCount+=1;
+            setTimeout(() => {
+              this.onLoad();
+            }, 300);
+          } else {
+            this.getResources(JSON.parse(JSON.stringify(this.filterOptions)));
+          }
         }
         return;
       }

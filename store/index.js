@@ -88,10 +88,12 @@ export const mutations = {
 
 export const actions = {
   getUserInfo(context) {
-    return http.get("/api/users/info").then(res => {
-      context.commit("setUserInfo", res.data);
-      return res.data;
-    });
+    if (context.state.token) {
+      return http.get("/api/users/info").then(res => {
+        context.commit("setUserInfo", res.data);
+        return res.data;
+      });
+    }
   },
   login(context, {username, password}) {
     return http.post("/api/users/login", {
