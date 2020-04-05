@@ -4,7 +4,7 @@ import axios from "axios";
 
 const _http = axios.create({});
 let _redirect;
-_http.interceptors.request.use(config => {
+_http.interceptors.request.use((config) => {
   const userToken = localStorage.getItem("haoke_token");
   if (config.url.includes("/api")) {
     config.headers.Authorization = userToken;
@@ -26,7 +26,10 @@ _http.interceptors.response.use(
       return;
     }
     const rep = error.response;
-    if (rep.resultCode === 401) {
+    console.log('x', rep);
+    
+    if (rep.status === 401 || rep.status === 403) {
+      window.localStorage.removeItem("haoke_token");
       _redirect("/login");
     }
     Toast.fail(error.response.data.resultMsg || "请求服务失败");
@@ -34,7 +37,7 @@ _http.interceptors.response.use(
   }
 );
 
-export default function({ redirect }) {
+export default function ({ redirect }) {
   _redirect = redirect;
   Vue.prototype.$http = _http;
 }

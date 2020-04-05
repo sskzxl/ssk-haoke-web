@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import Chat from "~/components/chat"
+import Chat from "~/components/chat";
 export default {
   layout: "normal",
   components: {
@@ -31,7 +31,7 @@ export default {
   },
   beforeDestroy() {
     this.$store.commit('setShowConcat', false)
-  }
+  },
 };
 </script>
 

@@ -21,7 +21,7 @@
           <van-image :src="`${imgUrl}/${pic}`"></van-image>
         </van-swipe-item>
       </van-swipe>
-      <div style="background-color: #fff">
+      <div style="background-color: #fff;">
         <h2>{{ resource.title }}</h2>
       </div>
       <p class="hk-details__tags">
@@ -30,7 +30,7 @@
         }}</van-tag>
         <span class="hk-details__time">{{ resource.created }}发布</span>
       </p>
-      <div style="padding: 0 10px 10px">
+      <div style="padding: 0 10px 10px;">
         <van-row :gutter="20" class="hk-details__info">
           <van-col span="8">
             <h4>{{ resource.rent }}元/月</h4>
@@ -72,7 +72,7 @@
       </div>
       <div class="hk-details__thing">
         <h5>房屋配置</h5>
-        <van-row style="text-align: center">
+        <van-row style="text-align: center;">
           <van-col span="4" v-for="item in resource.facilities" :key="item">
             <van-icon name="graphic" />
             <p>{{ $data.$types[Number.parseInt(item)] }}</p>
@@ -81,7 +81,7 @@
       </div>
       <div class="hk-details__describe">
         <h5>房屋描述</h5>
-        <div style="padding: 16px 30px">
+        <div style="padding: 16px 30px;">
           <ChatUser
             :user="{ name: resource.contact, phone: resource.mobile }"
           ></ChatUser>
@@ -112,7 +112,7 @@
           </p>
         </van-col>
         <van-col span="18">
-          <p><a href="联系房东">联系房东</a></p>
+          <p><span @click="handleConcat">联系房东</span></p>
         </van-col>
         <!-- <van-col span="9">
           <p>
@@ -140,18 +140,18 @@ const types = {
   7: "热水器",
   8: "宽带",
   9: "沙发",
-  10: "衣柜"
+  10: "衣柜",
 };
 const decoration = {
   1: "精装",
   2: "简装",
-  3: "毛坯"
+  3: "毛坯",
 };
 export default {
   layout: "basic",
   components: {
     ResourceList,
-    ChatUser
+    ChatUser,
   },
   data() {
     return {
@@ -159,15 +159,27 @@ export default {
       $decoration: decoration,
       recommendList: [],
       resource: {},
-      imgUrl: config.sourceUrl.img
+      imgUrl: config.sourceUrl.img,
     };
   },
   asyncData({ params }) {
-    return getResource(params.id).then(res => {
+    return getResource(params.id).then((res) => {
       return { resource: res.data };
     });
   },
   methods: {
+    handleConcat() {
+      if (!this.$store.state.token) {
+        this.$router.push({
+          path: "/login",
+          params: { redirect: this.$route.path }
+        });
+      } else if (this.resource.contactId) {
+        this.$router.push(`/chat/${this.resource.contactId}`);
+      } else {
+        this.$total.error("缺少联系人id");
+      }
+    },
     handleBack() {
       if (this.$route.query.from) {
         this.$router.push(`/${this.$route.query.from}`);
@@ -177,8 +189,8 @@ export default {
     },
     handleShare() {
       this.$router.back();
-    }
-  }
+    },
+  },
 };
 </script>
 

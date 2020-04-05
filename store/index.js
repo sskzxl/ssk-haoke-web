@@ -1,6 +1,5 @@
 import {http} from "~/plugins/http";
-import {context} from "vant/lib/mixins/popup/context";
-import {getCityList} from "../plugins/apis";
+import {getCityList, getUserListByIM} from "../plugins/apis";
 
 export const state = () => ({
   title: "",
@@ -42,6 +41,7 @@ export const state = () => ({
   banners: [],
   position: { city: '', district: '' },
   citys: [],
+  iMUsers: [],
   user: null,
   token: window.localStorage.getItem("haoke_token")
 });
@@ -84,6 +84,9 @@ export const mutations = {
   setDistrict(state, value) {
     state.position.district = value;
   },
+  setIMUserList(state, value) {
+    state.iMUsers = value;
+  },
 };
 
 export const actions = {
@@ -121,5 +124,10 @@ export const actions = {
         return i;
       }));
     });
+  },
+  getIMUserList(context, fromId) {
+    return getUserListByIM(fromId).then(res => {
+      context.commit("setIMUserList", res.data);
+    })
   }
 };

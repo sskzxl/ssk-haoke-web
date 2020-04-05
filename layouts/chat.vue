@@ -6,24 +6,6 @@
         <nuxt/>
       </transition>
     </div>
-    <div class="chat-input">
-      <van-row>
-        <van-col span="18">
-          <van-field v-model="message" placeholder="输入内容"/>
-        </van-col>
-        <van-col span="3">
-          <van-icon name="smile-o"/>
-        </van-col>
-        <van-col span="3">
-          <van-icon
-            name="upgrade"
-            @click="handlePushMessage"
-            v-if="message.length"
-          />
-          <van-icon name="plus" @click="handleAddMedia" v-else/>
-        </van-col>
-      </van-row>
-    </div>
   </div>
 </template>
 

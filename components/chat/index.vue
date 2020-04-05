@@ -6,10 +6,10 @@
     finished-text="没有更多了"
     @load="onLoad"
   >
-    <nuxt-link 
-        v-for="item in list" 
-        :key="item" 
-        :to="`/chat/${item}?name=玩女士`"
+    <nuxt-link
+      v-for="item in iMUsers"
+      :key="item"
+      :to="`/chat/${item}?name=玩女士`"
     >
       <van-row class="hk-messages__item">
         <van-col :span="6" style="text-align:center">
@@ -33,31 +33,31 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+import { getUserListByIM } from "~/plugins/apis";
 export default {
   name: "Chat",
   data() {
     return {
-      list: [],
+      iMUsers: [],
       loading: false,
       finished: false
     };
   },
+  computed: {
+    ...mapState(["user"])
+  },
   methods: {
     onLoad() {
-      // 异步更新数据
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1);
-        }
-
-        // 加载状态结束
-        this.loading = false;
-
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
+      if (this.user) {
+        getUserListByIM(this.user.id).then(res => {
+          this.loading = false;
           this.finished = true;
-        }
-      }, 1000);
+        });
+      } else {
+        this.loading = false;
+        this.finished = true;
+      }
     }
   }
 };

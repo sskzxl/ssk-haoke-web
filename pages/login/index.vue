@@ -31,6 +31,7 @@
       </van-field>
       <van-field
         v-if="loginType === 2"
+        type="password"
         v-model="password"
         name="密码"
         label="密码"
@@ -61,7 +62,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapState, mapActions } from "vuex";
 import HeaderBasic from "~/components/header/HeaderBasic";
 export default {
   layout: "basic",
@@ -77,23 +78,31 @@ export default {
       loginType: 2 // 1 验证码登录， 2 密码登录
     };
   },
+  computed: {
+    ...mapState(["token"])
+  },
   beforeCreate() {
     this.$store.commit("setTitle", "手机号登录");
   },
+  created() {
+    if (this.token) {
+      this.$router.push("/");
+    }
+  },
   methods: {
-    ...mapActions(['login']),
+    ...mapActions(["login"]),
     handleSubmit() {
       this.login({
-          username: this.username,
-          password: this.password
-        })
-        .then(res => {
-          if (res.resultCode === 0) {
-            this.$toast.success(res.resultMsg);
-            window.localStorage.setItem("haoke_token", res.data);
-            this.$router.push('/')
-          }
-        });
+        username: this.username,
+        password: this.password
+      }).then(res => {
+        if (res.resultCode === 0) {
+          this.$toast.success(res.resultMsg);
+          window.localStorage.setItem("haoke_token", res.data);
+          this.$store.commit("setToken", res.data);
+          this.$router.push("/");
+        }
+      });
     },
     handleChangeLoginType() {
       this.loginType = this.loginType === 1 ? 2 : 1;

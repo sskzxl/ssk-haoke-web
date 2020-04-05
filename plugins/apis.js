@@ -41,3 +41,11 @@ export function getCity(params) {
   );
   return http.get("https://www.mxnzp.com/api/address/search", { params });
 }
+
+export function getUserListByIM(fromId) {
+  return http.get("/api/v1/house/message/user/list", { params: { fromId } });
+}
+
+export function getRecordListByIM(fromId, toId) {
+  return http.get("/api/v1/message", { params: { fromId, toId } });
+}
