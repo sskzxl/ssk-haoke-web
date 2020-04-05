@@ -172,10 +172,14 @@ export default {
       if (!this.$store.state.token) {
         this.$router.push({
           path: "/login",
-          params: { redirect: this.$route.path }
+          query: { redirect: this.$route.path },
         });
       } else if (this.resource.contactId) {
-        this.$router.push(`/chat/${this.resource.contactId}`);
+        const { contactId, contact } = this.resource;
+        this.$router.push({
+          path: `/chat/${contactId}`,
+          query: { contact },
+        });
       } else {
         this.$total.error("缺少联系人id");
       }

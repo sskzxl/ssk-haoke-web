@@ -18,10 +18,6 @@
       };
     },
     methods: {
-      handlePushMessage() {
-      },
-      handleAddMedia() {
-      },
       handleBack() {
         this.$router.back()
       }

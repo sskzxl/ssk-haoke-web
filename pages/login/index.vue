@@ -100,7 +100,7 @@ export default {
           this.$toast.success(res.resultMsg);
           window.localStorage.setItem("haoke_token", res.data);
           this.$store.commit("setToken", res.data);
-          this.$router.push("/");
+          this.$router.push(this.$route.query ? this.$route.query.redirect ? this.$route.query.redirect : "/" : "/");
         }
       });
     },
