@@ -120,9 +120,9 @@ export default {
       type: Number,
       default: 0
     },
-    filterAddress: {
-      type: Array,
-      default: () => []
+    rentMethod: {
+      type: Number,
+      required: false,
     },
     filter: {
       type: Boolean,
@@ -133,9 +133,10 @@ export default {
   computed: {
     ...mapState(["position"])
   },
-  beforeCreate() {
-    console.log(this.$route);
-    
+  created() {
+    if (this.rentMethod) {
+      this.filterOptions.rentMethod = this.rentMethod;
+    }
   },
   mounted() {},
   methods: {

@@ -47,5 +47,5 @@ export function getUserListByIM(fromId) {
 }
 
 export function getRecordListByIM(fromId, toId) {
-  return http.get("/api/v1/message", { params: { fromId, toId } });
+  return http.get("/api/v1/house/message", { params: { fromId, toId } });
 }

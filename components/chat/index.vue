@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import { getUserListByIM } from "~/plugins/apis";
 export default {
   name: "Chat",
@@ -45,18 +45,24 @@ export default {
     };
   },
   computed: {
-    ...mapState(["user"])
+    ...mapState(["user", "token"])
   },
   methods: {
+    ...mapActions(["getUserInfo"]),
     onLoad() {
-      if (this.user) {
-        getUserListByIM(this.user.id).then(res => {
-          this.loading = false;
-          this.finished = true;
-        });
+      console.log(this.token);
+      this.getUserInfo()
+        .then(res => {
+          res && getUserListByIM(res.id).then(res => {
+            this.loading = false;
+            this.finished = true;
+          });
+        })
+      if (this.token) {
       } else {
         this.loading = false;
         this.finished = true;
+        this.$router.push(`/login?redirect=${this.$route.path}`);
       }
     }
   }

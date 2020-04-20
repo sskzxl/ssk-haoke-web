@@ -1,6 +1,6 @@
 <template>
   <div class="resource">
-    <ResourceList></ResourceList>
+    <ResourceList :rentMethod="rentMethod"></ResourceList>
   </div>
 </template>
 
@@ -14,11 +14,11 @@
     },
     data() {
       return {
-        filterType: 1,
-        resources: [],
-        loading: false,
-        finished: false
+        rentMethod: 1,
       };
+    },
+    created() {
+      this.rentMethod = Number(this.$route.query.type);
     },
     methods: {
     }

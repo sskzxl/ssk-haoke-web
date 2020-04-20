@@ -32,6 +32,7 @@
       <van-field
         v-if="loginType === 2"
         v-model="password"
+        type="password"
         name="密码"
         label="密码"
         placeholder="密码"
@@ -103,6 +104,9 @@ export default {
         .then(res => {
           if (res.status === 0) {
             this.$toast.success("注册成功");
+            this.$router.push('/login');
+          } else {
+            this.$toast.fail(res.resultMsg);
           }
         });
     }

@@ -39,6 +39,7 @@ import { mapState, mapActions } from "vuex";
 import ChatItem from "~/components/chat/chat";
 import { getRecordListByIM } from "~/plugins/apis";
 let ws;
+const maxConnectionCount = 10;
 export default {
   layout: "basic",
   components: {
@@ -49,6 +50,7 @@ export default {
       title: "",
       message: "",
       messages: [],
+      reConnection: 0,
     };
   },
   computed: {
@@ -63,7 +65,17 @@ export default {
       getRecordListByIM(
         this.user.id,
         this.$route.params.id
-      ).then((res) => {});
+      ).then((res) => {
+        res.data.forEach((item) => {
+            this.messages.push({
+              text: item.msg,
+              direction: item.from.id === this.user.id ? "r" : "l",
+              user:
+                item.from.id === this.user.id ? item.from.username : item.to.username,
+            });
+          });
+          this.scrollBottom();
+      });
       this.connectWs();
     } else {
       this.getUserInfo().then((res) => {
@@ -87,6 +99,7 @@ export default {
   },
   destroyed() {
     ws.close();
+    ws = null;
   },
   methods: {
     ...mapActions(["getUserInfo"]),
@@ -94,18 +107,28 @@ export default {
       // ws = new WebSocket(`ws://haoke.natapp1.cc/ws/1001`);
       ws = new WebSocket(`ws://haoke.natapp1.cc/ws/${this.user.id}`);
       ws.onmessage = this.handleWsMessage.bind(this);
+      ws.onerror = this.handleWsError.bind(this);
+    },
+    handleWsError() {
+      this.$toast.fail('WS连接出错，正在重试!');
+        this.reConnection++;
+        if (this.reConnection < maxConnectionCount) {
+          setTimeout(() => {
+            this.connectWs();
+          }, 2000);
+        }
     },
     handleWsMessage(event) {
       const data = event.data;
       this.messages.push({
         text: data.msg,
-        direction: data.from.id === 1001 ? "r" : "l",
-        user: data.from.id === 1001 ? data.from.username : data.to.username,
+        direction: data.from.id === this.$route.params.id ? "r" : "l",
+        user: data.from.id === this.$route.params.id ? data.from.username : data.to.username,
       });
     },
     handlePushMessage() {
-      ws.send(JSON.stringify({ toId: 1002, msg: this.message }));
-      // ws.send(JSON.stringify({toId: this.$route.params.id, msg: this.message}));
+      // ws.send(JSON.stringify({ toId: 1002, msg: this.message }));
+      ws.send(JSON.stringify({toId: this.$route.params.id, msg: this.message}));
       this.messages.push({ text: this.message, direction: "r" });
       this.message = "";
       this.scrollBottom();

@@ -339,6 +339,7 @@ export default {
   }
   & .van-col:last-child {
     background-color: #4bbbff;
+    color: #fff;
   }
 
   .van-icon {

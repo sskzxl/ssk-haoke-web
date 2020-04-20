@@ -66,7 +66,7 @@ export default {
         {
           name: "看房记录",
           icon: "browsing-history-o",
-          link: "/"
+          link: ""
         },
         {
           name: "我的订单",

@@ -108,7 +108,8 @@ export const actions = {
     return http.post("/api/users/logout").then(res => {
       window.localStorage.removeItem("haoke_token");
       context.commit("setUserInfo", null);
-      context.commit("token", "");
+      context.commit("setToken", "");
+      context.commit("setShowLogout", false);
     });
   },
   getBanners(context) {
