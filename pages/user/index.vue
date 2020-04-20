@@ -3,7 +3,7 @@
     <div class="hk-user-info">
       <van-row type="flex" justify="center" align="center">
         <van-col span="6" class="hk-user__pic">
-          <van-image v-if="user && user.pic"></van-image>
+          <van-image v-if="user && user.headUrl" src="http://image.haoke.com/head/defaultHead.jpg"></van-image>
         </van-col>
         <van-col span="18">
           <div v-if="user">

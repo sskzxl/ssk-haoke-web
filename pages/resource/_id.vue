@@ -60,8 +60,8 @@
               <span>{{ resource.orientation }}</span>
             </van-col>
             <van-col span="12">
-              <span>类型：</span>
-              <span>精装修</span>
+              <span>看房时间：</span>
+              <span>{{ resource.time}}</span>
             </van-col>
           </van-row>
         </div>
@@ -86,11 +86,7 @@
             :user="{ name: resource.contact, phone: resource.mobile }"
           ></ChatUser>
           <p class="hk-details__txt">
-            回龙观东大街，全新家具家电，整体厨卫，整体卫浴，可以洗澡上网。房间干净整洁，芝麻信用分可抵押金。
-            校区四个门四个公交站，回龙观公交总站300米，13号线回龙观东大街占1500米。
-            回龙观东大街，全新家具家电，整体厨卫，整体卫浴，可以洗澡上网。房间干净整洁，芝麻信用分可抵押金。
-            校区四个门四个公交站，回龙观公交总站300米，13号线回龙观东大街占1500米
-            回龙观东大街，全新家具家电，整体厨卫，整体卫浴，可以洗澡上网。房间干净整洁，芝麻信用分可抵押金。
+            {{resource.houseDesc}}
           </p>
         </div>
       </div>
