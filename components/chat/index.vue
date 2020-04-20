@@ -9,7 +9,7 @@
     <nuxt-link
       v-for="item in iMUsers"
       :key="item"
-      :to="`/chat/${item}?name=玩女士`"
+      :to="`/chat/${item.to_user}?contact=${item.to_username}`"
     >
       <van-row class="hk-messages__item">
         <van-col :span="6" style="text-align:center">
@@ -17,15 +17,15 @@
             round
             width="3rem"
             height="3rem"
-            src="https://img.yzcdn.cn/vant/cat.jpeg"
+            :src="item.avatar"
           />
         </van-col>
         <van-col :span="14">
-          <h4>房东女士 <span>认证房主</span></h4>
-          <p>明天能否签约？</p>
+          <h4>{{item.to_username}} <span>认证房主</span></h4>
+          <!-- <p>明天能否签约？</p> -->
         </van-col>
         <van-col :span="4">
-          <p>10:53</p>
+          <!-- <p>10:53</p> -->
         </van-col>
       </van-row>
     </nuxt-link>
@@ -56,6 +56,7 @@ export default {
           res && getUserListByIM(res.id).then(res => {
             this.loading = false;
             this.finished = true;
+            this.iMUsers = res.data;
           });
         })
       if (this.token) {
@@ -78,6 +79,7 @@ export default {
   }
 
   h4 {
+    margin-top: 6px;
     font-weight: normal;
     font-size: 18px;
     color: #333;

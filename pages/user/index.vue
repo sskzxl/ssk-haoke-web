@@ -96,7 +96,7 @@ export default {
         {
           name: "房屋管理",
           icon: "completed",
-          link: ""
+          link: "/resource/manage"
         },
         {
           name: "钱包",
