@@ -37,7 +37,7 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import ChatItem from "~/components/chat/chat";
-import { getRecordListByIM } from "~/plugins/apis";
+import { getRecordListByIM, getContact } from "~/plugins/apis";
 let ws;
 const maxConnectionCount = 10;
 export default {
@@ -62,6 +62,8 @@ export default {
   mounted() {
     this.title = this.$route.query.contact;
     if (this.user) {
+      getContact(this.$route.params.id, this.user.id);
+      console.log(this.$route.params.id, this.user.id);
       getRecordListByIM(
         this.user.id,
         this.$route.params.id
@@ -82,7 +84,8 @@ export default {
         getRecordListByIM(
           this.user.id,
           this.$route.params.id
-        ).then((res) => {
+        ).then((res) => {console.log(this.$route.params.id, this.user.id);
+          getContact(this.$route.params.id, this.user.id);
           res.data.forEach((item) => {
             this.messages.push({
               text: item.msg,

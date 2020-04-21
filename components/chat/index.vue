@@ -47,10 +47,11 @@ export default {
   computed: {
     ...mapState(["user", "token"])
   },
+  mounted() {
+  },
   methods: {
     ...mapActions(["getUserInfo"]),
     onLoad() {
-      console.log(this.token);
       this.getUserInfo()
         .then(res => {
           res && getUserListByIM(res.id).then(res => {

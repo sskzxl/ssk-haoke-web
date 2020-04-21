@@ -49,3 +49,9 @@ export function getUserListByIM(fromId) {
 export function getRecordListByIM(fromId, toId) {
   return http.get("/api/v1/house/message", { params: { fromId, toId } });
 }
+
+export function getContact(fromId, toId) {
+  return http.get("/api/v1/house/message/user/contact", {
+    params: { fromId, toId }
+  });
+}

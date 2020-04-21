@@ -17,7 +17,7 @@
         :autoplay="3000"
         indicator-color="white"
       >
-        <van-swipe-item v-for="pic in resource.picList" :key="pic">
+        <van-swipe-item v-for="(pic, index) in resource.picList" :key="pic + index">
           <van-image :src="`${imgUrl}/${pic}`"></van-image>
         </van-swipe-item>
       </van-swipe>
@@ -73,7 +73,7 @@
       <div class="hk-details__thing">
         <h5>房屋配置</h5>
         <van-row style="text-align: center;">
-          <van-col span="4" v-for="item in resource.facilities" :key="item">
+          <van-col span="4" v-for="(item, index) in resource.facilities" :key="item + index">
             <van-icon name="graphic" />
             <p>{{ $data.$types[Number.parseInt(item)] }}</p>
           </van-col>
