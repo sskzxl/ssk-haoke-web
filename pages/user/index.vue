@@ -3,7 +3,9 @@
     <div class="hk-user-info">
       <van-row type="flex" justify="center" align="center">
         <van-col span="6" class="hk-user__pic">
-          <van-image v-if="user && user.headUrl" src="http://image.haoke.com/head/defaultHead.jpg"></van-image>
+          <!--<img :src="`${imgUrl}/head/${user.headUrl}`"  :class="hk-user__pic" />-->
+
+          <van-image :src="`${imgUrl}/head/${user.headUrl}`"></van-image>
         </van-col>
         <van-col span="18">
           <div v-if="user">
@@ -44,6 +46,7 @@
 <script>
 import { mapActions, mapState, mapMutations } from "vuex";
 import ResourceList from "~/components/resource-list";
+import config from "~/app.config";
 export default {
   layout: "normal",
   name: "UserCenter",
@@ -62,6 +65,7 @@ export default {
   },
   data() {
     return {
+      imgUrl: config.sourceUrl.img,
       navs: [
         {
           name: "看房记录",

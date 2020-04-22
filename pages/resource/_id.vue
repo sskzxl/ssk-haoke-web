@@ -73,9 +73,10 @@
       <div class="hk-details__thing">
         <h5>房屋配置</h5>
         <van-row style="text-align: center;">
-          <van-col span="4" v-for="(item, index) in resource.facilities" :key="item + index">
-            <van-icon name="graphic" />
-            <p>{{ $data.$types[Number.parseInt(item)] }}</p>
+          <van-col span="3" v-for="(item, index) in resource.facilities" :key="item + index">
+            <!--<van-icon name="graphic" />-->
+            <van-image :src="`${imgUrl}/icon/${item}`"></van-image>
+            <p>{{ $data.$types[Number.parseInt(index)] }}</p>
           </van-col>
         </van-row>
       </div>
@@ -127,16 +128,16 @@ import ResourceList from "~/components/resource-list";
 import ChatUser from "~/components/chat-user";
 import { getResource } from "~/plugins/apis";
 const types = {
-  1: "洗衣机",
-  2: "冰箱",
+  1: "床",
+  2: "洗衣机",
   3: "空调",
-  4: "阳台",
-  5: "卫生间",
-  6: "电视",
+  4: "衣柜",
+  5: "电视",
+  6: "冰箱",
   7: "热水器",
-  8: "宽带",
-  9: "沙发",
-  10: "衣柜",
+  8: "暖气",
+  9: "宽带",
+  10: "天然气",
 };
 const decoration = {
   1: "精装",
