@@ -1,5 +1,5 @@
-import {http} from "~/plugins/http";
-import {getCityList, getUserListByIM} from "../plugins/apis";
+import { http } from "~/plugins/http";
+import { getCityList, getUserListByIM } from "../plugins/apis";
 
 export const state = () => ({
   title: "",
@@ -39,7 +39,7 @@ export const state = () => ({
     }
   ],
   banners: [],
-  position: { city: '', district: '' },
+  position: { city: "", district: "" },
   citys: [],
   iMUsers: [],
   user: null,
@@ -86,7 +86,7 @@ export const mutations = {
   },
   setIMUserList(state, value) {
     state.iMUsers = value;
-  },
+  }
 };
 
 export const actions = {
@@ -98,7 +98,7 @@ export const actions = {
       });
     }
   },
-  login(context, {username, password}) {
+  login(context, { username, password }) {
     return http.post("/api/users/login", {
       username,
       password
@@ -112,23 +112,22 @@ export const actions = {
       context.commit("setShowLogout", false);
     });
   },
-  getBanners(context) {
-    return http.get("/api/ad").then(res => {
-      context.commit("setBanners", res.data.list);
-    });
-  },
+
   getCityList(context) {
     return getCityList().then(res => {
-      context.commit("setCityList", res.data.map(item => {
-        const i = {};
-        i[String(item.value)] = item.label;
-        return i;
-      }));
+      context.commit(
+        "setCityList",
+        res.data.map(item => {
+          const i = {};
+          i[String(item.value)] = item.label;
+          return i;
+        })
+      );
     });
   },
   getIMUserList(context, fromId) {
     return getUserListByIM(fromId).then(res => {
       context.commit("setIMUserList", res.data);
-    })
+    });
   }
 };

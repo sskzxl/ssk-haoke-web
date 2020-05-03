@@ -40,7 +40,8 @@ export default {
 }
 .chat-item__message {
   width: 90%;
-  min-height: 100px;
+  padding-bottom: 10px;
+  // min-height: 100px;
   background-color: #fff;
   padding: 10px 20px;
   box-shadow: 0 0 4px 0 #ddd;

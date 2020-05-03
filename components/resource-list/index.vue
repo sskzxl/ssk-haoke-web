@@ -94,7 +94,9 @@ export default {
         address: "",
         upPrice: "",
         lowPrice: "",
-        rentMethod: ""
+        rentMethod: "",
+        // 前台只查询通过审核的房源
+        byReview: 1
       },
       types: [
         { text: "不限", value: "" },
@@ -122,7 +124,7 @@ export default {
     },
     rentMethod: {
       type: Number,
-      required: false,
+      required: false
     },
     filter: {
       type: Boolean,
@@ -150,7 +152,7 @@ export default {
             ...res.data[0].pchilds[0].cchilds.map((city, idx) => {
               return {
                 text: city.name,
-                value: city.name,
+                value: city.name
               };
             })
           );
@@ -244,7 +246,7 @@ export default {
           this.onLoad();
         } else {
           if (this.retryCount < MaxRequestCount) {
-            this.retryCount+=1;
+            this.retryCount += 1;
             setTimeout(() => {
               this.onLoad();
             }, 300);

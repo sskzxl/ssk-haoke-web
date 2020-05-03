@@ -106,18 +106,18 @@
 import { mapState, mapActions } from "vuex";
 import MainNav from "~/components/MainNav";
 import ResourceList from "~/components/resource-list";
-import { getResources, getBanners, getCityList } from "~/plugins/apis";
+import { getResources, getCityList } from "~/plugins/apis";
 
 export default {
   components: {
     MainNav,
     ResourceList
   },
-  asyncData() {
-    return getBanners().then(res => {
-      return { banners: res.data.list };
-    });
-  },
+//  asyncData() {
+//    return getBanners().then(res => {
+//      return { banners: res.data.list };
+//    });
+//  },
   computed: {
     ...mapState(["citys", "position", "token", "user"])
   },

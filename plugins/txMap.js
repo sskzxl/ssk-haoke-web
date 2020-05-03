@@ -24,7 +24,7 @@ const TXMap = {
         if (_this.map === undefined) {
           // 地图对象为undefined时, 需要进行地图的绘制
           delete options.data;
-                   
+
           _this.map = new window.qq.maps.Map(
             document.getElementById(options.containerId),
             Object.assign({}, {
@@ -39,7 +39,7 @@ const TXMap = {
               minZoom: 10,
               // 停用缩放控件
               zoomControl: false,
-              
+
               // 停用地图类型控件
               mapTypeControl: false
             }, options )

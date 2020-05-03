@@ -43,18 +43,18 @@ const maxConnectionCount = 10;
 export default {
   layout: "basic",
   components: {
-    ChatItem,
+    ChatItem
   },
   data() {
     return {
       title: "",
       message: "",
       messages: [],
-      reConnection: 0,
+      reConnection: 0
     };
   },
   computed: {
-    ...mapState(["token", "user"]),
+    ...mapState(["token", "user"])
   },
   beforeCreate() {
     this.$store.commit("setTitle", this.$route.params.name);
@@ -62,38 +62,45 @@ export default {
   mounted() {
     this.title = this.$route.query.contact;
     if (this.user) {
-      getContact(this.$route.params.id, this.user.id);
-      console.log(this.$route.params.id, this.user.id);
-      getRecordListByIM(
-        this.user.id,
-        this.$route.params.id
-      ).then((res) => {
-        res.data.forEach((item) => {
-            this.messages.push({
-              text: item.msg,
-              direction: item.from.id === this.user.id ? "r" : "l",
-              user:
-                item.from.id === this.user.id ? item.from.username : item.to.username,
-            });
+      //所联系房东是自己
+      if (this.user.id == this.$route.params.id) {
+        console.log("自己人");
+      }
+      //添加到聊天好友列表
+      getContact(this.user.id, this.$route.params.id);
+      console.log(this.user.id, this.$route.params.id);
+      //获取聊天记录
+      getRecordListByIM(this.user.id, this.$route.params.id).then(res => {
+        res.data.forEach(item => {
+          this.messages.push({
+            text: item.msg,
+            // 获取到的消息对象中 from.id和当前用户相等，则消息是自己的，在右边，否则
+            direction: item.from.id === this.user.id ? "r" : "l",
+            user:
+              item.from.id === this.user.id
+                ? item.from.username
+                : item.to.username
           });
-          this.scrollBottom();
+        });
+        this.scrollBottom();
       });
       this.connectWs();
     } else {
-      this.getUserInfo().then((res) => {
-        getRecordListByIM(
-          this.user.id,
-          this.$route.params.id
-        ).then((res) => {console.log(this.$route.params.id, this.user.id);
+      this.getUserInfo().then(res => {
+        getRecordListByIM(this.user.id, this.$route.params.id).then(res => {
+          console.log(this.$route.params.id, this.user.id);
           getContact(this.$route.params.id, this.user.id);
-          res.data.forEach((item) => {
+          res.data.forEach(item => {
             this.messages.push({
               text: item.msg,
               direction: item.from.id === this.user.id ? "r" : "l",
               user:
-                item.from.id === this.user.id ? item.from.username : item.to.username,
+                item.from.id === this.user.id
+                  ? item.from.username
+                  : item.to.username
             });
           });
+          //翻到聊天最底部
           this.scrollBottom();
         });
         this.connectWs();
@@ -110,28 +117,33 @@ export default {
       // ws = new WebSocket(`ws://haoke.natapp1.cc/ws/1001`);
       ws = new WebSocket(`ws://haoke.natapp1.cc/ws/${this.user.id}`);
       ws.onmessage = this.handleWsMessage.bind(this);
-      ws.onerror = this.handleWsError.bind(this);
+      // ws.onerror = this.handleWsError.bind(this);
     },
     handleWsError() {
-      this.$toast.fail('WS连接出错，正在重试!');
-        this.reConnection++;
-        if (this.reConnection < maxConnectionCount) {
-          setTimeout(() => {
-            this.connectWs();
-          }, 2000);
-        }
+      this.$toast.fail("WS连接出错，正在重试!");
+      this.reConnection++;
+      if (this.reConnection < maxConnectionCount) {
+        setTimeout(() => {
+          this.connectWs();
+        }, 2000);
+      }
     },
     handleWsMessage(event) {
       const data = event.data;
       this.messages.push({
         text: data.msg,
         direction: data.from.id === this.$route.params.id ? "r" : "l",
-        user: data.from.id === this.$route.params.id ? data.from.username : data.to.username,
+        user:
+          data.from.id === this.$route.params.id
+            ? data.from.username
+            : data.to.username
       });
     },
     handlePushMessage() {
       // ws.send(JSON.stringify({ toId: 1002, msg: this.message }));
-      ws.send(JSON.stringify({toId: this.$route.params.id, msg: this.message}));
+      ws.send(
+        JSON.stringify({ toId: this.$route.params.id, msg: this.message })
+      );
       this.messages.push({ text: this.message, direction: "r" });
       this.message = "";
       this.scrollBottom();
@@ -145,8 +157,8 @@ export default {
     },
     handleBack() {
       this.$router.back();
-    },
-  },
+    }
+  }
 };
 </script>
 

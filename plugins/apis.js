@@ -10,9 +10,9 @@ export function getResources(params) {
   });
 }
 
-export function getBanners() {
-  return http.get("/api/ad");
-}
+// export function getBanners() {
+//   return http.get("/api/ad");
+// }
 
 export function getCityList() {
   return http.get("/api/house/resources/allCity");
@@ -54,4 +54,18 @@ export function getContact(fromId, toId) {
   return http.get("/api/v1/house/message/user/contact", {
     params: { fromId, toId }
   });
+}
+export function getBookingPage(id) {
+  return http.get(`/api/house/book/${id}`);
+}
+export function commitBooking(addBook) {
+  return http.post(`/api/house/book/commit`, addBook);
+}
+export function getBookList(params) {
+  return http.get(`/api/house/book/page`, {
+    params
+  });
+}
+export function getBookListByReqId(id) {
+  return http.get(`/api/house/book/req/${id}`);
 }

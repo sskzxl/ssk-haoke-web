@@ -17,7 +17,10 @@
         :autoplay="3000"
         indicator-color="white"
       >
-        <van-swipe-item v-for="(pic, index) in resource.picList" :key="pic + index">
+        <van-swipe-item
+          v-for="(pic, index) in resource.picList"
+          :key="pic + index"
+        >
           <van-image :src="`${imgUrl}/${pic}`"></van-image>
         </van-swipe-item>
       </van-swipe>
@@ -61,7 +64,7 @@
             </van-col>
             <van-col span="12">
               <span>看房时间：</span>
-              <span>{{ resource.time}}</span>
+              <span>{{ resource.time }}</span>
             </van-col>
           </van-row>
         </div>
@@ -73,7 +76,11 @@
       <div class="hk-details__thing">
         <h5>房屋配置</h5>
         <van-row style="text-align: center;">
-          <van-col span="3" v-for="(item, index) in resource.facilities" :key="item + index">
+          <van-col
+            span="3"
+            v-for="(item, index) in resource.facilities"
+            :key="item + index"
+          >
             <!--<van-icon name="graphic" />-->
             <van-image :src="`${imgUrl}/icon/${item}`"></van-image>
             <p>{{ $data.$types[Number.parseInt(index)] }}</p>
@@ -87,7 +94,7 @@
             :user="{ name: resource.contact, phone: resource.mobile }"
           ></ChatUser>
           <p class="hk-details__txt">
-            {{resource.houseDesc}}
+            {{ resource.houseDesc }}
           </p>
         </div>
       </div>
@@ -108,25 +115,79 @@
             收藏
           </p>
         </van-col>
-        <van-col span="18">
+        <van-col span="9">
           <p><span @click="handleConcat">联系房东</span></p>
         </van-col>
-        <!-- <van-col span="9">
-          <p>
-            <nuxt-link :to="{ path: '/subscribe', query: { resource_id: 1 } }"
+        <van-col span="9">
+          <p @click="showReqPopup" :disabled="this.disabledBtn">
+            <!-- <nuxt-link
+              :to="{ path: '/subscribe', query: { id: this.resource.id } }"
               >预约看房</nuxt-link
-            >
+            >-->
+            预约看房
           </p>
-        </van-col> -->
+        </van-col>
       </van-row>
+      <!--预约弹窗-->
+      <van-popup
+        v-model="showReq"
+        title="预约时间："
+        class=".hk_showReq"
+        position="bottom"
+        round="true"
+      >
+        <div>
+          <van-field
+            v-model="startValue"
+            @focus="handleStartInputDateTime"
+            name="时间"
+            label="到访时间："
+            right-icon="clock-o"
+            :rules="[{ required: true, message: '请选择预约时间' }]"
+          />
+          <van-field
+            v-model="endValue"
+            @focus="handleEndInputDateTime"
+            name="时间"
+            label="离开时间："
+            right-icon="clock-o"
+            :rules="[{ required: true, message: '请选择预约时间' }]"
+          />
+        </div>
+        <van-button type="info" @click="commitBookMethod">确认</van-button>
+        <van-button type="warning" @click="showReq = false">取消</van-button>
+      </van-popup>
+
+      <van-popup v-model="showStart" position="bottom">
+        <van-datetime-picker
+          v-model="commitBook.startTime"
+          type="datetime"
+          @cancel="handleClose"
+          @confirm="confirmStartFn"
+          title="请选择预约时间"
+        />
+      </van-popup>
+      <!--时间弹窗-->
+      <van-popup v-model="showEnd" position="bottom">
+        <van-datetime-picker
+          v-model="commitBook.endTime"
+          type="datetime"
+          :mix-date="startTime"
+          @cancel="handleClose"
+          @confirm="confirmEndFn"
+          title="请选择预约时间"
+        />
+      </van-popup>
     </div>
   </div>
 </template>
 <script>
+import { Toast } from "vant";
 import config from "~/app.config";
 import ResourceList from "~/components/resource-list";
 import ChatUser from "~/components/chat-user";
-import { getResource } from "~/plugins/apis";
+import { getResource, commitBooking } from "~/plugins/apis";
+import { mapState } from "vuex";
 const types = {
   1: "床",
   2: "洗衣机",
@@ -137,45 +198,143 @@ const types = {
   7: "热水器",
   8: "暖气",
   9: "宽带",
-  10: "天然气",
+  10: "天然气"
 };
 const decoration = {
   1: "精装",
   2: "简装",
-  3: "毛坯",
+  3: "毛坯"
 };
 export default {
   layout: "basic",
   components: {
     ResourceList,
-    ChatUser,
+    ChatUser
   },
   data() {
     return {
+      //按钮禁用
+      disabledBtn: false,
+      //预约提交框时间
+      startValue: this.timeFormat(new Date()), //输入框默认值
+      endValue: this.timeFormat(new Date()),
+      showEnd: false,
+      showStart: false,
+      concat: "",
+      startTime: new Date(),
+      endTime: new Date(),
+      disabledFiled: false,
+      commitBook: {
+        userId: "",
+        houseResourcesId: this.$route.query.id,
+        startTime: new Date(),
+        endTime: new Date(),
+        //当前时间
+        reqTime: new Date()
+      },
+      showReq: false,
       $types: types,
       $decoration: decoration,
       recommendList: [],
       resource: {},
-      imgUrl: config.sourceUrl.img,
+      imgUrl: config.sourceUrl.img
     };
   },
   asyncData({ params }) {
-    return getResource(params.id).then((res) => {
+    return getResource(params.id).then(res => {
       return { resource: res.data };
     });
   },
+  computed: {
+    ...mapState(["user", "token"])
+  },
   methods: {
+    commitBookMethod() {
+      this.commitBook.houseResourcesId = this.resource.id;
+      this.commitBook.userId = this.user.id;
+      console.log(this.commitBook);
+      commitBooking(this.commitBook).then(res => {
+        //重复预约
+        if (10000 == res.resultCode) {
+          Toast.fail(res.resultMsg || "请求服务失败");
+          this.disabledBtn = true;
+          this.showReq = false;
+        } else {
+          if (0 == res.resultCode) {
+            //预约成功
+            Toast.success("预约成功！");
+            this.disabledBtn = true;
+            this.showReq = false;
+          }
+        }
+        console.log(res);
+      });
+    },
+    confirmStartFn() {
+      console.log(this.startTime);
+      this.startValue = this.timeFormat(this.commitBook.startTime);
+      this.showStart = false;
+    },
+    confirmEndFn() {
+      this.endValue = this.timeFormat(this.commitBook.endTime);
+      this.showEnd = false;
+    },
+    handleStartInputDateTime() {
+      this.showStart = true;
+    },
+    handleEndInputDateTime() {
+      this.showEnd = true;
+    },
+    handleClose() {
+      this.showStart = false;
+      this.showEnd = false;
+    },
+    timeFormat(time) {
+      console.log(time);
+      // 时间格式化 2019-09-08
+      let year = time.getFullYear();
+      let month = time.getMonth() + 1;
+      let day = time.getDate();
+      let hour = time.getHours();
+      let minute = time.getMinutes();
+      let second = time.getSeconds();
+
+      month = month < 10 ? "0" + month : month;
+      day = day < 10 ? "0" + day : day;
+      hour = hour < 10 ? "0" + hour : hour;
+      minute = minute < 10 ? "0" + minute : minute;
+      second = second < 10 ? "0" + second : second;
+      return (
+        year +
+        "-" +
+        month +
+        "-" +
+        day +
+        ":" +
+        hour +
+        ":" +
+        minute +
+        ":" +
+        second
+      );
+    },
+    showReqPopup() {
+      this.showReq = true;
+    },
     handleConcat() {
       if (!this.$store.state.token) {
+        // 判断是否登陆
         this.$router.push({
           path: "/login",
-          query: { redirect: this.$route.path },
+          query: { redirect: this.$route.path }
         });
       } else if (this.resource.contactId) {
         const { contactId, contact } = this.resource;
+
+        // 跳转到聊天页面
         this.$router.push({
           path: `/chat/${contactId}`,
-          query: { contact },
+          query: { contact }
         });
       } else {
         this.$total.error("缺少联系人id");
@@ -190,8 +349,8 @@ export default {
     },
     handleShare() {
       this.$router.back();
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -347,6 +506,9 @@ export default {
     color: #ff0505;
     font-size: 24px;
     vertical-align: sub;
+  }
+  .hk_showReq {
+    width: 100%;
   }
 }
 </style>

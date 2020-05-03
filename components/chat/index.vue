@@ -13,15 +13,10 @@
     >
       <van-row class="hk-messages__item">
         <van-col :span="6" style="text-align:center">
-          <van-image
-            round
-            width="3rem"
-            height="3rem"
-            :src="item.avatar"
-          />
+          <van-image round width="3rem" height="3rem" :src="item.avatar" />
         </van-col>
         <van-col :span="14">
-          <h4>{{item.to_username}} <span>认证房主</span></h4>
+          <h4>{{ item.to_username }} <span>认证房主</span></h4>
           <!-- <p>明天能否签约？</p> -->
         </van-col>
         <van-col :span="4">
@@ -47,19 +42,18 @@ export default {
   computed: {
     ...mapState(["user", "token"])
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     ...mapActions(["getUserInfo"]),
     onLoad() {
-      this.getUserInfo()
-        .then(res => {
-          res && getUserListByIM(res.id).then(res => {
+      this.getUserInfo().then(res => {
+        res &&
+          getUserListByIM(res.id).then(res => {
             this.loading = false;
             this.finished = true;
             this.iMUsers = res.data;
           });
-        })
+      });
       if (this.token) {
       } else {
         this.loading = false;
