@@ -123,17 +123,25 @@ const TXMap = {
           // }
         }
 
+        function jumpResource(e) {
+          if (e.target.resource) { 
+            window.location.href = `/resource/${e.target.resource.houseResourcesId}`;
+          }
+          console.log(arguments)
+        }
+
         function MarkerCluster() {
           const markers = new qq.maps.MVCArray();
           // 根据接口数据绘制覆盖物
           if (_this.sourceData.length > 0) {
             _this.sourceData.map(item => {
-              markers.push(
-                new qq.maps.Marker({
-                  position: new qq.maps.LatLng(item.y, item.x),
-                  map: _this.map
-                })
-              );
+              const m = new qq.maps.Marker({
+                position: new qq.maps.LatLng(item.y, item.x),
+                map: _this.map,
+                resource: item,
+              })
+              qq.maps.event.addListener(m, 'click', jumpResource);
+              markers.push(m);
             });
             new qq.maps.MarkerCluster({
               map: _this.map,
