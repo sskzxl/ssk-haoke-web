@@ -5,7 +5,8 @@
         <van-col span="6" class="hk-user__pic">
           <!--<img :src="`${imgUrl}/head/${user.headUrl}`"  :class="hk-user__pic" />-->
 
-          <van-image :src="`${imgUrl}/head/${user.headUrl}`"></van-image>
+          <van-image :src="`${imgUrl}/head/${user.headUrl}`" v-if="user"></van-image>
+          <van-image src="" v-else></van-image>
         </van-col>
         <van-col span="18">
           <div v-if="user">

@@ -203,6 +203,7 @@ import { mapState } from "vuex";
 import { http } from "~/plugins/http";
 import { addHouse } from "~/plugins/apis";
 import { Toast } from "vant";
+import { getResource } from "~/plugins/apis";
 export default {
   layout: "basic",
   data() {
@@ -238,7 +239,10 @@ export default {
         { text: "年付押一", value: 4 },
         { text: "其它", value: 5 }
       ],
-      rentTypeList: [{ text: "整租", value: 1 }, { text: "合租", value: 2 }],
+      rentTypeList: [
+        { text: "整租", value: 1 },
+        { text: "合租", value: 2 }
+      ],
       showRent: false,
       showRentType: false,
       showFacilities: false,
@@ -321,9 +325,52 @@ export default {
       ]
     };
   },
-  created() {},
   computed: {
     ...mapState(["token", "user"])
+  },
+  created() {
+    if (this.$route.query.id) {
+      this.title = "修改房源";
+      console.log(this.$route.query.id);
+      getResource(this.$route.query.id).then(res => {
+        if (res.data) {
+          const {
+            title,
+            rent,
+            rentMethod,
+            houseType,
+            address,
+            decoration,
+            orientation,
+            attachments,
+            houseDesc,
+            contact,
+            contactId,
+            mobile,
+            propertyCost,
+            pic,
+            floor,
+            useArea,
+            coveredArea,
+            picList,
+          } = res.data;
+          this.form.title = title;
+          this.form.rentMethod = rentMethod;
+          this.form.houseDesc = houseDesc;
+          this.form.floor = floor;
+          this.form.useArea = useArea;
+          this.form.address = address;
+          this.form.rent = rent;
+          this.form.orientation = orientation;
+          this.form.coveredArea = coveredArea;
+          this.form.pic = picList;
+          this.form.decoration = decoration;
+          this.imageUrl = picList;
+          this.rentText = this.rentTypeList[rentMethod-1].text;
+          this.decoratorText = this.decoratorList[decoration-1].text;
+        }
+      });
+    }
   },
   methods: {
     handlePublishResource() {
@@ -398,7 +445,6 @@ export default {
       // let data = await axios.post(`/pic/upload`, formdata1, config);
       console.log(data);
     },
-
     formatterTime(type, val) {
       console.log(val);
 

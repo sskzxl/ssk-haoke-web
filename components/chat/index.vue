@@ -8,7 +8,7 @@
   >
     <nuxt-link
       v-for="item in iMUsers"
-      :key="item"
+      :key="item.id"
       :to="`/chat/${item.to_user}?contact=${item.to_username}`"
     >
       <van-row class="hk-messages__item">

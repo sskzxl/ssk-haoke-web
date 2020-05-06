@@ -8,6 +8,7 @@
       @click-right="handleShare"
     />
     <div id="Map" ref="MapWrap"></div>
+    <van-loading type="spinner" class="hk-map-loading" color="#1989fa" v-show="isLoading" />
   </div>
 </template>
 
@@ -23,13 +24,16 @@ export default {
   data() {
     return {
       title: "地图找房",
-      lastZoom: 10
+      lastZoom: 10,
+      isLoading: true,
     };
   },
   mounted() {
     this.$refs.MapWrap.style.height = window.innerHeight - 51 + "px";
     txMap.getLocation().then(res => {
       this.getHouseByMap(res);
+    }).catch(err => {
+      this.$toast.fail(err);
     });
   },
   methods: {
@@ -39,6 +43,7 @@ export default {
         lng: res.lng,
         zoom: this.lastZoom,
       }).then(resource => {
+        this.isLoading = false;
         histryData = histryData.concat(resource.data.list)
         txMap.drawOverlay({
           lat: res.lat,
@@ -109,5 +114,15 @@ export default {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+.hk-map-loading {
+  position: fixed;
+  top: 50px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

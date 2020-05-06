@@ -123,7 +123,8 @@ export default {
   },
   data() {
     return {
-      cityList: []
+      cityList: [],
+      banners: [],
     };
   },
   created() {

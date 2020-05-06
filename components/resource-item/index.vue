@@ -57,10 +57,12 @@ export default {
             delHouse(id).then(res => {
               if (0 == res.resultCode) {
                 Toast.success("删除成功");
+                this.$emit('delHouse', id);
               }
             });
           })
           .catch(() => {
+            this.$router.push(`/user/publish?id=${id}`);
             // on cancel
           });
         console.log("管理");
