@@ -1,5 +1,5 @@
 <template>
-  <nuxt-link :to="`/resource/${data.id}`">
+  <div @click="toDetail(data.id, type)">
     <van-row type="flex" class="hk-recommend__item">
       <van-col :span="9">
         <img :src="`${imgUrl}/${data.pic}`" />
@@ -19,21 +19,54 @@
         <p>{{ data.rent }}元/月</p>
       </van-col>
     </van-row>
-  </nuxt-link>
+  </div>
 </template>
 
 <script>
 import config from "~/app.config";
+import { Dialog } from "vant";
+import { delHouse } from "~/plugins/apis";
+import { Toast } from "vant";
 export default {
+  components: {
+    [Dialog.Component.name]: Dialog.Component
+  },
   props: {
     data: {
       type: Object,
       required: true
-    }
+    },
+    type: ""
   },
   data() {
     return {
       imgUrl: config.sourceUrl.img
+    };
+  },
+  methods: {
+    toDetail(id, type) {
+      if (type) {
+        Dialog.confirm({
+          title: "请选择操作",
+          confirmButtonText: "删除房源",
+          cancelButtonText: "修改房源",
+          cancelButtonColor: "#1989fa"
+        })
+          .then(() => {
+            //删除房源
+            delHouse(id).then(res => {
+              if (0 == res.resultCode) {
+                Toast.success("删除成功");
+              }
+            });
+          })
+          .catch(() => {
+            // on cancel
+          });
+        console.log("管理");
+      } else {
+        this.$router.push(`/resource/${id}`);
+      }
     }
   }
 };

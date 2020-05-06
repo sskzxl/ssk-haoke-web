@@ -69,3 +69,9 @@ export function getBookList(params) {
 export function getBookListByReqId(id) {
   return http.get(`/api/house/book/req/${id}`);
 }
+export function addHouse(addHouse) {
+  return http.post(`/api/house/resources`, addHouse);
+}
+export function delHouse(id) {
+  return http.delete(`/api/house/resources/${id}`);
+}

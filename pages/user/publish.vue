@@ -3,44 +3,30 @@
     <van-nav-bar fixed="" :title="title" left-arrow @click-left="handleBack" />
     <van-form class="hk-publish__form" @submit="handlePublishResource">
       <van-field
-        name="房源信息"
-        label="房源信息"
-        v-model="form.name"
-      ></van-field>
-      <van-field
-        name="楼盘地址"
-        label="楼盘地址"
-        v-model="form.estateAddress"
-      ></van-field>
-      <van-field
         name="房源标题"
         label="房源标题"
         v-model="form.title"
       ></van-field>
-      <van-field name="楼栋" label="楼栋" v-model="form.title"></van-field>
+      <van-field name="地址" label="地址" v-model="form.address"></van-field>
+
       <van-field name="租金" label="租金" v-model="form.rent"></van-field>
+
       <van-field
-        name="支付方式"
-        label="支付方式"
-        readonly
-        @click="showRent = true"
-      ></van-field>
-      <van-field
+        v-model="rentText"
         name="租赁方式"
         label="租赁方式"
         readonly
         @click="showRentType = true"
       ></van-field>
-      <van-field 
-        name="户型" 
+      <van-field
+        name="户型"
         label="户型"
         readonly
-        @click="showHouseType = true">
+        @click="showHouseType = true"
+      >
         <template slot="input">
-          {{ form.houseType_1 }} 室
-          {{ form.houseType_2 }} 厅
-          {{ form.houseType_3 }} 卫
-        </template>  
+          {{ houseType_1 }} 室 {{ houseType_2 }} 厅 {{ houseType_3 }} 卫
+        </template>
       </van-field>
       <van-field
         name="建筑面积"
@@ -54,8 +40,14 @@
         v-model="form.useArea"
         placeholder="平方"
       ></van-field>
-      <van-field name="楼层" label="楼层" v-model="form.floor_1"></van-field>
-      <van-field name="总楼层" label="总楼层" v-model="form.floor_2"></van-field>
+      <van-field
+        name="楼层"
+        label="楼层"
+        v-model="form.floor"
+        placeholder="楼层/总楼层，如2/5"
+      >
+      </van-field>
+
       <van-field
         name="朝向"
         label="朝向"
@@ -63,7 +55,7 @@
         @click="showOrientation = true"
       >
         <template slot="input">
-          {{ form.orientation.text }}
+          {{ form.orientation }}
         </template>
       </van-field>
       <van-field
@@ -73,7 +65,7 @@
         @click="showDecorator = true"
       >
         <template slot="input">
-          {{ form.decoration.text }}
+          {{ decoratorText }}
         </template>
       </van-field>
       <van-field
@@ -83,7 +75,7 @@
         @click="showFacilities = true"
       >
         <template slot="input">
-          {{ currentFacilities.join('/') }}
+          {{ form.attachments.join("/") }}
         </template>
       </van-field>
       <van-field
@@ -94,16 +86,19 @@
       ></van-field>
       <van-field name="上传室内图" label="上传室内图">
         <template #input>
-          <van-uploader v-model="form.imageUrl"></van-uploader>
+          <van-uploader
+            multiple
+            :afterRead="afterRead"
+            v-model="imageUrl"
+          ></van-uploader>
         </template>
       </van-field>
-      <van-field
+      <!--<van-field
         name="出租信息"
         label="出租信息"
         v-model="form.contact"
-      ></van-field>
-      <van-field name="手机" label="手机" v-model="form.mobile"></van-field>
-      <van-field
+      ></van-field>-->
+      <!--<van-field
         name="看房时间"
         label="看房时间"
         readonly
@@ -118,7 +113,7 @@
         name="物业费"
         label="物业费"
         v-model="form.propertyCost"
-      ></van-field>
+      ></van-field>-->
       <div style="margin: 16px;">
         <van-button round block type="info" native-type="submit">
           提交
@@ -134,11 +129,12 @@
         @cancel="showRent = false"
       />
     </van-popup>
+    <!--租赁方式-->
     <van-popup v-model="showRentType" position="bottom">
       <van-picker
         show-toolbar
         :columns="rentTypeList"
-        @confirm="handleSelectRent"
+        @confirm="handleSelectRentType"
         @cancel="showRentType = false"
       />
     </van-popup>
@@ -176,7 +172,7 @@
       closeable
       style="padding-top: 50px"
     >
-      <van-checkbox-group v-model="currentFacilities">
+      <van-checkbox-group v-model="form.attachments">
         <van-cell-group>
           <van-cell
             v-for="item in facilities"
@@ -185,7 +181,7 @@
             :title="`${item.text}`"
           >
             <template #right-icon>
-              <van-checkbox :name="item.text" ref="checkboxes" />
+              <van-checkbox :name="item.value" ref="checkboxes" />
             </template>
           </van-cell>
         </van-cell-group>
@@ -203,26 +199,37 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+import { http } from "~/plugins/http";
+import { addHouse } from "~/plugins/apis";
+import { Toast } from "vant";
 export default {
   layout: "basic",
   data() {
     return {
+      imageUrl: [],
+      houseType_1: "",
+      houseType_2: "",
+      houseType_3: "",
       title: "发布房源",
+      // 显示
+      rentText: "",
       form: {
-        name: "",
-        estateAddress: "",
         title: "",
         rent: "",
-        paymentMethod: "",
+        rentMethod: "",
+        houseType: "",
+        address: "",
         decoration: "",
         orientation: "",
-        facilities: "",
+        attachments: [],
         houseDesc: "",
         contact: "",
+        contactId: "",
         mobile: "",
-        time: "",
         propertyCost: "",
-        imageUrl: []
+        pic: [],
+        floor: ""
       },
       rendList: [
         { text: "付一押一", value: 1 },
@@ -231,23 +238,21 @@ export default {
         { text: "年付押一", value: 4 },
         { text: "其它", value: 5 }
       ],
-      rentTypeList: [
-        { text: "整租", value: 1 },
-        { text: "合租", value: 2 }
-      ],
+      rentTypeList: [{ text: "整租", value: 1 }, { text: "合租", value: 2 }],
       showRent: false,
       showRentType: false,
       showFacilities: false,
       facilities: [
-        { text: "水", value: "1" },
-        { text: "电", value: "2" },
-        { text: "煤气/天然气", value: "3" },
-        { text: "暖气", value: "4" },
-        { text: "有线电视", value: "5" },
-        { text: "宽带", value: "6" },
-        { text: "电梯", value: "7" },
-        { text: "车位/车库", value: "8" },
-        { text: "地下室/储藏室", value: "9" }
+        { text: "床", value: "1" },
+        { text: "洗衣机", value: "2" },
+        { text: "空调", value: "3" },
+        { text: "衣柜", value: "4" },
+        { text: "电视", value: "5" },
+        { text: "冰箱", value: "6" },
+        { text: "热水器", value: "7" },
+        { text: "暖气", value: "8" },
+        { text: "宽带", value: "9" },
+        { text: "天然气", value: "10" }
       ],
       currentFacilities: [],
       decoratorList: [
@@ -255,16 +260,13 @@ export default {
         { text: "简装", value: 2 },
         { text: "毛坯", value: 3 }
       ],
+      //装修显示
+      decoratorText: "",
       showDecorator: false,
       showTime: false,
       minDate: new Date(Date.now() + 86400000),
       currentDate: "",
-      orientationList: [
-       { text: "南", value: 1 },
-       { text: "北", value: 2 },
-       { text: "东", value: 3 },
-       { text: "西", value: 4 },
-      ],
+      orientationList: ["南", "北", "东", "西"],
       showOrientation: false,
       floor_1: "",
       floor_2: "",
@@ -272,50 +274,135 @@ export default {
       showHouseType: false,
       houseTypes: [
         {
-         defaultIndex: 0,
-         values: ['1室','2室','3室','4室','5室','6室','7室','8室','9室','10室'] 
+          defaultIndex: 0,
+          values: [
+            "1室",
+            "2室",
+            "3室",
+            "4室",
+            "5室",
+            "6室",
+            "7室",
+            "8室",
+            "9室",
+            "10室"
+          ]
         },
         {
-         defaultIndex: 0,
-         values: ['1厅','2厅','3厅','4厅','5厅','6厅','7厅','8厅','9厅','10厅'] 
+          defaultIndex: 0,
+          values: [
+            "1厅",
+            "2厅",
+            "3厅",
+            "4厅",
+            "5厅",
+            "6厅",
+            "7厅",
+            "8厅",
+            "9厅",
+            "10厅"
+          ]
         },
         {
-         defaultIndex: 0,
-         values: ['1卫','2卫','3卫','4卫','5卫','6卫','7卫','8卫','9卫','10卫'] 
-        },
+          defaultIndex: 0,
+          values: [
+            "1卫",
+            "2卫",
+            "3卫",
+            "4卫",
+            "5卫",
+            "6卫",
+            "7卫",
+            "8卫",
+            "9卫",
+            "10卫"
+          ]
+        }
       ]
     };
   },
-  created() {
+  created() {},
+  computed: {
+    ...mapState(["token", "user"])
   },
   methods: {
-    handlePublishResource() {},
+    handlePublishResource() {
+      this.form.contact = this.user.username;
+      this.form.contactId = this.user.id;
+      this.form.mobile = this.user.phone;
+      addHouse(this.form).then(res => {
+        if (0 == res.resultCode) {
+          //成功
+          Toast.success("房源发布成功，等待审核");
+          //等待1.5秒再返回
+          setTimeout(() => {
+            this.$router.back();
+          }, 1500);
+        } else {
+          Toast.fail("房源发布失败，请重试");
+        }
+      });
+      console.log(this.form);
+    },
     handleSelectRent(item) {},
+    //租房方式
+    handleSelectRentType(item) {
+      this.rentText = item.text;
+      this.form.rentMethod = item.value;
+      this.showRentType = false;
+    },
+    //配套设施
     handleSelectFacilities() {},
+    //房屋类型，几房几厅
     handleSelectHouseType(_, values) {
-      this.form.houseType_1 = values[0] + 1;
-      this.form.houseType_2 = values[1] + 1;
-      this.form.houseType_3 = values[2] + 1;
+      this.houseType_1 = values[0] + 1;
+      this.houseType_2 = values[1] + 1;
+      this.houseType_3 = values[2] + 1;
+      this.form.houseType =
+        this.houseType_1 +
+        "室" +
+        this.houseType_2 +
+        "厅" +
+        this.houseType_3 +
+        "卫";
       this.showHouseType = false;
     },
+    //朝向
     handleSelectOrientation(item) {
+      console.log(item);
       this.form.orientation = item;
       this.showOrientation = false;
     },
     handleSelectDecorator(item) {
-      this.form.decoration = item;
+      this.form.decoration = item.value;
+      this.decoratorText = item.text;
       this.showDecorator = false;
     },
     handleSelectTime(time) {
       this.form.time = time.getTime();
       this.showTime = false;
     },
-    handleBack() {},
-    afterRead() {},
+    handleBack() {
+      this.$router.back();
+    },
+    async afterRead(file) {
+      this.form.pic.push(file.file.name);
+      // 创建form对象
+      let formdata1 = new FormData();
+      // 通过append向form对象添加数据,可以通过append继续添加数据
+      //或formdata1.append('file',file);
+      formdata1.append("file", file.file);
+
+      let config = { headers: { "Content-Type": "multipart/form-data" } };
+      let data = http.post(`/api/api/pic/upload`, formdata1, config);
+      // let data = await axios.post(`/pic/upload`, formdata1, config);
+      console.log(data);
+    },
+
     formatterTime(type, val) {
       console.log(val);
-      
-        return val ? new Date(val).toLocaleString() : "";
+
+      return val ? new Date(val).toLocaleString() : "";
     }
   }
 };

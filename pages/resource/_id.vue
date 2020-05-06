@@ -116,7 +116,7 @@
           </p>
         </van-col>
         <van-col span="9">
-          <p><span @click="handleConcat">联系房东</span></p>
+          <p><span @click="handleConcat"> </span></p>
         </van-col>
         <van-col span="9">
           <p @click="showReqPopup" :disabled="this.disabledBtn">

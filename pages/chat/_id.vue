@@ -117,7 +117,7 @@ export default {
       // ws = new WebSocket(`ws://haoke.natapp1.cc/ws/1001`);
       ws = new WebSocket(`ws://haoke.natapp1.cc/ws/${this.user.id}`);
       ws.onmessage = this.handleWsMessage.bind(this);
-      // ws.onerror = this.handleWsError.bind(this);
+      ws.onerror = this.handleWsError.bind(this);
     },
     handleWsError() {
       this.$toast.fail("WS连接出错，正在重试!");

@@ -25,12 +25,12 @@ export const state = () => ({
       icon: "chat-o",
       path: "/message"
     },
-    {
-      tabTitle: "资讯",
-      curr: false,
-      icon: "orders-o",
-      path: "/news"
-    },
+    // {
+    //   tabTitle: "资讯",
+    //   curr: false,
+    //   icon: "orders-o",
+    //   path: "/news"
+    // },
     {
       tabTitle: "我的",
       curr: false,

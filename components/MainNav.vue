@@ -16,8 +16,10 @@
         </nuxt-link>
       </van-col>
       <van-col :span="6">
-        <van-icon name="search" size="40px" color="#ffc00d" />
-        <h5>去出租</h5>
+        <nuxt-link to="/user/publish">
+          <van-icon name="search" size="40px" color="#ffc00d" />
+          <h5>去出租</h5>
+        </nuxt-link>
       </van-col>
     </van-row>
   </div>
