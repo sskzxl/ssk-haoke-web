@@ -65,6 +65,7 @@
           :key="item.id"
           :data="item"
           type="manage"
+          @delHouse="handleDelHouse"
         >
         </ResourceItem>
 
@@ -158,6 +159,15 @@ export default {
   },
   mounted() {},
   methods: {
+    handleDelHouse(id) {
+      console.log("有进来删除房源刷新列表");
+      for (let idx in this.resources) {
+        if (this.resources[idx].id === id) {
+          this.resources.splice(idx, 1);
+          return;
+        }
+      }
+    },
     handleBack() {
       if (this.$route.query.from) {
         this.$router.push(`/${this.$route.query.from}`);

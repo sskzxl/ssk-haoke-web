@@ -62,7 +62,6 @@
           v-for="item in resources"
           :key="item.id"
           :data="item"
-          @delHouse="handleDelHouse"
         ></ResourceItem>
         <!--        <p v-if="resources.length === 0 && filterType === 0" style="padding: 20px 0;">暂无推荐</p>-->
       </van-list>
@@ -144,13 +143,14 @@ export default {
   mounted() {},
   methods: {
     handleDelHouse(id) {
-      for(let idx in this.resources) {
+      console.log("有进来删除房源刷新列表");
+      for (let idx in this.resources) {
         if (this.resources[idx].id === id) {
           this.resources.splice(idx, 1);
           return;
         }
       }
-    },  
+    },
     getCity() {
       getCity({
         type: 1,

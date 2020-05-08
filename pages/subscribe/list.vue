@@ -26,17 +26,22 @@ export default {
       loading: false,
       finished: false,
       filterOption: {
-        tenantId: ""
+        tenantId: "",
+        hostId: ""
       }
     };
   },
   created() {
+    //租客
     this.filterOption.tenantId = this.$route.query.id;
+    this.filterOption.hostId = this.$route.query.id;
+    console.log("请求参数");
     console.log(this.filterOption);
     getBookList({
       //请求参数filter
       filter: this.filterOption
     }).then(res => {
+      console.log("请求参数");
       console.log(res.data);
     });
   },

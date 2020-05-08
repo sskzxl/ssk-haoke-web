@@ -1,80 +1,74 @@
-const webpack = require('webpack');
+const webpack = require("webpack");
 
 module.exports = {
-  mode: 'spa',
+  mode: "spa",
   /*
-  ** Headers of the page
-  */
+   ** Headers of the page
+   */
   head: {
-    title: process.env.npm_package_name || '',
+    title: process.env.npm_package_name || "",
     meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
+      { charset: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      {
+        hid: "description",
+        name: "description",
+        content: process.env.npm_package_description || ""
+      }
     ],
-    link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ],
+    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
     script: [
       {
-        src: "https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js",
-        ssr: false,
+        src:
+          "https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js",
+        ssr: false
       }
     ]
   },
   /*
-  ** Customize the progress-bar color
-  */
-  loading: { color: '#fff' },
+   ** Customize the progress-bar color
+   */
+  loading: { color: "#fff" },
   /*
-  ** Global CSS
-  */
-  css: [
-    'assets/main.css'
-  ],
+   ** Global CSS
+   */
+  css: ["assets/main.css"],
   /*
-  ** Plugins to load before mounting the App
-  */
-  plugins: [
-    '~plugins/vant-ui.js',
-    '~plugins/http.js',
-    '~plugins/utils.js',
-  ],
+   ** Plugins to load before mounting the App
+   */
+  plugins: ["~plugins/vant-ui.js", "~plugins/http.js", "~plugins/utils.js"],
   router: {
-    middleware: 'auth'
+    middleware: "auth"
   },
   /*
-  ** Nuxt.js dev-modules
-  */
-  buildModules: [
-  ],
+   ** Nuxt.js dev-modules
+   */
+  buildModules: [],
   /*
-  ** Nuxt.js modules
-  */
-  modules: [
-    '@nuxtjs/proxy',
-    '@nuxtjs/axios'
-  ],
+   ** Nuxt.js modules
+   */
+  modules: ["@nuxtjs/proxy", "@nuxtjs/axios"],
   /*
-  ** Build configuration
-  */
+   ** Build configuration
+   */
   build: {
     /*
-    ** You can extend webpack config here
-    */
-    vendor: ['axios'],
+     ** You can extend webpack config here
+     */
+    vendor: ["axios"]
   },
   axios: {
     proxy: true,
-    prefix: '/api',
-    credentials: true,
+    prefix: "/api",
+    credentials: true
   },
   proxy: {
-    '/api': {
-      target: 'http://haoke.natapp1.cc',
+    "/api": {
+      // target: 'http://haoke.natapp1.cc',
+      target: "http://127.0.0.1:18081",
       pathRewrite: {
-        '^/api': '/'
+        "^/api": "/"
       }
     }
-  },
-}
+  }
+};

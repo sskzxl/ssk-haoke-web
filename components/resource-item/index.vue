@@ -47,6 +47,8 @@ export default {
     toDetail(id, type) {
       if (type) {
         Dialog.confirm({
+          closeOnClickOverlay: true,
+          closeOnPopstate: "true",
           title: "请选择操作",
           confirmButtonText: "删除房源",
           cancelButtonText: "修改房源",
@@ -56,8 +58,11 @@ export default {
             //删除房源
             delHouse(id).then(res => {
               if (0 == res.resultCode) {
-                Toast.success("删除成功");
-                this.$emit('delHouse', id);
+                console.log("删除房源id:" + id);
+                setTimeout(() => {
+                  Toast.success("删除成功");
+                }, 500);
+                this.$emit("delHouse", id);
               }
             });
           })

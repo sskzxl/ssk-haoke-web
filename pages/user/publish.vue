@@ -203,7 +203,7 @@ import { mapState } from "vuex";
 import { http } from "~/plugins/http";
 import { addHouse } from "~/plugins/apis";
 import { Toast } from "vant";
-import { getResource } from "~/plugins/apis";
+import { getResource, modifyHouse } from "~/plugins/apis";
 export default {
   layout: "basic",
   data() {
@@ -216,6 +216,7 @@ export default {
       // 显示
       rentText: "",
       form: {
+        id: "",
         title: "",
         rent: "",
         rentMethod: "",
@@ -239,10 +240,7 @@ export default {
         { text: "年付押一", value: 4 },
         { text: "其它", value: 5 }
       ],
-      rentTypeList: [
-        { text: "整租", value: 1 },
-        { text: "合租", value: 2 }
-      ],
+      rentTypeList: [{ text: "整租", value: 1 }, { text: "合租", value: 2 }],
       showRent: false,
       showRentType: false,
       showFacilities: false,
@@ -335,6 +333,7 @@ export default {
       getResource(this.$route.query.id).then(res => {
         if (res.data) {
           const {
+            id,
             title,
             rent,
             rentMethod,
@@ -352,8 +351,9 @@ export default {
             floor,
             useArea,
             coveredArea,
-            picList,
+            picList
           } = res.data;
+          this.form.id = id;
           this.form.title = title;
           this.form.rentMethod = rentMethod;
           this.form.houseDesc = houseDesc;
@@ -366,8 +366,8 @@ export default {
           this.form.pic = picList;
           this.form.decoration = decoration;
           this.imageUrl = picList;
-          this.rentText = this.rentTypeList[rentMethod-1].text;
-          this.decoratorText = this.decoratorList[decoration-1].text;
+          this.rentText = this.rentTypeList[rentMethod - 1].text;
+          this.decoratorText = this.decoratorList[decoration - 1].text;
         }
       });
     }
@@ -377,19 +377,37 @@ export default {
       this.form.contact = this.user.username;
       this.form.contactId = this.user.id;
       this.form.mobile = this.user.phone;
-      addHouse(this.form).then(res => {
-        if (0 == res.resultCode) {
-          //成功
-          Toast.success("房源发布成功，等待审核");
-          //等待1.5秒再返回
-          setTimeout(() => {
-            this.$router.back();
-          }, 1500);
-        } else {
-          Toast.fail("房源发布失败，请重试");
-        }
-      });
-      console.log(this.form);
+      //修改
+
+      if (this.form.id) {
+        console.log("修改房源有id" + this.form.id);
+        modifyHouse(this.form).then(res => {
+          if (0 == res.resultCode) {
+            //成功
+            Toast.success("房源修改成功，等待审核");
+            //等待1.5秒再返回
+            setTimeout(() => {
+              this.$router.back();
+            }, 1500);
+          } else {
+            Toast.fail("房源修改失败，请重试");
+          }
+        });
+      } else {
+        addHouse(this.form).then(res => {
+          if (0 == res.resultCode) {
+            //成功
+            Toast.success("房源发布成功，等待审核");
+            //等待1.5秒再返回
+            setTimeout(() => {
+              this.$router.back();
+            }, 1500);
+          } else {
+            Toast.fail("房源发布失败，请重试");
+          }
+        });
+        console.log(this.form);
+      }
     },
     handleSelectRent(item) {},
     //租房方式

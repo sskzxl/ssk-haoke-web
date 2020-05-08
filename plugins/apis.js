@@ -75,3 +75,9 @@ export function addHouse(addHouse) {
 export function delHouse(id) {
   return http.delete(`/api/house/resources/${id}`);
 }
+export function modifyHouse(modifyHouse) {
+  return http.put(`/api/house/resources`, modifyHouse);
+}
+export function modifyBookStatus(modifyBookStatus) {
+  return http.put(`/api/house/book`, modifyBookStatus);
+}
