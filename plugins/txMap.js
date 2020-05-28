@@ -180,11 +180,12 @@ const TXMap = {
     }
   },
   getLocation() {
-    const ErrorText = "获取定位失败";
+    const ErrorText = "获取定位失败，请手动选择城市后再试";
     return new Promise((resolve, reject) => {
       if (!qq && !qq.maps) {
-        console.error(ErrorText);
-        return reject(ErrorText);
+        setTimeout(() => {
+          this.getLocation();
+        }, 1000);
       }
       const geolocation = new qq.maps.Geolocation(
         config.txMapKey,
