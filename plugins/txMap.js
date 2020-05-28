@@ -27,22 +27,26 @@ const TXMap = {
 
           _this.map = new window.qq.maps.Map(
             document.getElementById(options.containerId),
-            Object.assign({}, {
-              // 初始化地图中心
-              center: new window.qq.maps.LatLng(
-                options.lat || 22.702,
-                options.lng || 114.09
-              ),
-              // 初始化缩放级别
-              zoom: options.zoom || 10,
-              // 地图最小缩放级别
-              minZoom: 10,
-              // 停用缩放控件
-              zoomControl: false,
+            Object.assign(
+              {},
+              {
+                // 初始化地图中心
+                center: new window.qq.maps.LatLng(
+                  options.lat || 22.702,
+                  options.lng || 114.09
+                ),
+                // 初始化缩放级别
+                zoom: options.zoom || 10,
+                // 地图最小缩放级别
+                minZoom: 10,
+                // 停用缩放控件
+                zoomControl: false,
 
-              // 停用地图类型控件
-              mapTypeControl: false
-            }, options )
+                // 停用地图类型控件
+                mapTypeControl: false
+              },
+              options
+            )
           );
 
           // idle 事件, 地图缩放或平移之后触发该事件
@@ -124,10 +128,10 @@ const TXMap = {
         }
 
         function jumpResource(e) {
-          if (e.target.resource) { 
+          if (e.target.resource) {
             window.location.href = `/resource/${e.target.resource.houseResourcesId}`;
           }
-          console.log(arguments)
+          console.log(arguments);
         }
 
         function MarkerCluster() {
@@ -138,9 +142,9 @@ const TXMap = {
               const m = new qq.maps.Marker({
                 position: new qq.maps.LatLng(item.y, item.x),
                 map: _this.map,
-                resource: item,
-              })
-              qq.maps.event.addListener(m, 'click', jumpResource);
+                resource: item
+              });
+              qq.maps.event.addListener(m, "click", jumpResource);
               markers.push(m);
             });
             new qq.maps.MarkerCluster({
@@ -150,7 +154,7 @@ const TXMap = {
               zoomOnClick: true, //默认为true
               gridSize: 30, //默认60
               averageCenter: true, //默认false
-              maxZoom: 18, //默认18
+              maxZoom: 18 //默认18
             });
           }
         }
@@ -186,19 +190,20 @@ const TXMap = {
         setTimeout(() => {
           this.getLocation();
         }, 1000);
+      } else {
+        const geolocation = new qq.maps.Geolocation(
+          config.txMapKey,
+          config.txMapName
+        );
+        geolocation.getLocation(
+          position => {
+            resolve(position);
+          },
+          error => {
+            reject(ErrorText);
+          }
+        );
       }
-      const geolocation = new qq.maps.Geolocation(
-        config.txMapKey,
-        config.txMapName
-      );
-      geolocation.getLocation(
-        position => {
-          resolve(position);
-        },
-        error => {
-          reject(ErrorText);
-        }
-      );
     });
   }
 };
